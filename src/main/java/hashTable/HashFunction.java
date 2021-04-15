@@ -1,3 +1,5 @@
+package hashTable;
+
 import hashTable.openHashing.Node;
 
 import java.math.BigInteger;
@@ -19,7 +21,7 @@ public class HashFunction {
      * @param key String key
      * @return bInt BigInteger key
      */
-    public BigInteger hashCode (String key) {
+    private BigInteger hashCode (String key) {
         BigInteger a = BigInteger.valueOf(33);
         char c;
         BigInteger bInt = BigInteger.valueOf(0);
@@ -33,10 +35,11 @@ public class HashFunction {
 
     /**
      * Compress the bigInt value so that it is in the range from 0 to max_size
-     * @param bigInteger hash code of a string
+     * @param key String key
      * @return return key % max_size.
      */
-    public int hashFunction (BigInteger bigInteger) {
+    public int hashFunction (String key) {
+        BigInteger bigInteger = hashCode(key);
         return bigInteger.mod(BigInteger.valueOf(max_size)).intValue();
     }
 

@@ -1,7 +1,7 @@
 package hashTable.openHashing;
 import hashTable.HashEntry;
 import hashTable.Map;
-
+import hashTable.HashFunction;
 import java.util.HashMap;
 
 // check java source code
@@ -39,7 +39,33 @@ public class HashTableOpenHashing implements Map {
      * @param value associated value
      */
     public void put(String key, Object value) {
-            // FILL IN CODE
+        HashEntry entry = new HashEntry(key, value);
+        HashFunction hf = new HashFunction(maxSize);
+        if (hf.loadFactor(size) <= 0.6) {
+            int idx = hf.hashFunction(key);
+            if (table[idx] == null) {
+                Node head = new Node(entry);
+                table[idx] = head;
+                size ++;
+            } else {
+                Node newNode = new Node(entry, table[idx]);
+                table[idx] = newNode;
+                size++;
+            }
+        } else {
+            maxSize = hf.getNewSize();
+            Node [] temp = table;
+            for (int i = 0; i < maxSize; i++) {
+                table[i] = null;
+            }
+            for (int i = 0; i < temp.length; i++) {
+
+            }
+
+        }
+
+
+
     }
 
     /** Return the value associated with the given key or null, if the map does not contain the key.
