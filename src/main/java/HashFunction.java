@@ -49,8 +49,11 @@ public class HashFunction {
         return (double) num_entries / max_size;
     }
 
-    public void hashing (Node[] table) {
-        int new_size = closestPrime(max_size * 2);
+    /**
+     * @return new size is the smallest prime number that is larger than 2*max_size.
+     */
+    public int getNewSize (){
+        return closestPrime(max_size * 2);
     }
 
     /**
@@ -58,7 +61,7 @@ public class HashFunction {
      * @param num is 2 * max_size
      * @return the smallest prime number that is larger than num
      */
-    public int closestPrime (int num) {
+    private int closestPrime (int num) {
         int prime_below = 0;
         for (int i = num - 1; i >= 1; i--) {
             if (isPrime(i)) {
@@ -73,14 +76,15 @@ public class HashFunction {
                 break;
             }
         }
-        if (num - prime_below > prime_after - num) {
-            return prime_after;
-        } else {
-            return prime_below;
-        }
+        return prime_after;
     }
 
-    public boolean isPrime(int num) {
+    /**
+     * a helper function to check if a number is a primer number
+     * @param num integer number
+     * @return true if prime, false otherwise
+     */
+    private boolean isPrime(int num) {
         if (num == 2 || num == 3 || num == 5 || num == 7) {
             return true;
         } else if (num % 2 == 0 || num % 3 == 0 || num % 5 == 0 || num % 7 == 0) {
