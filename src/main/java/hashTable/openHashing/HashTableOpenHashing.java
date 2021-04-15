@@ -41,19 +41,20 @@ public class HashTableOpenHashing implements Map {
     public void put(String key, Object value) {
         HashEntry entry = new HashEntry(key, value);
         HashFunction hf = new HashFunction(maxSize);
+        int idx;
         if (hf.loadFactor(size) <= 0.6) {
-            int idx = hf.hashFunction(key);
+            idx = hf.hashFunction(key);
             if (table[idx] == null) {
                 Node head = new Node(entry);
                 table[idx] = head;
                 size ++;
             } else {
-                Node newNode = new Node(entry, table[idx]);
-                table[idx] = newNode;
-                size++;
+                insertInFront(idx, entry);
             }
         } else {
             rehash(hf);
+            idx = hf.hashFunction(key);
+            insertInFront(idx, entry);
         }
     }
 
@@ -117,5 +118,13 @@ public class HashTableOpenHashing implements Map {
             }
         }
         this.table = rehash_table.table;
+        this.maxSize = rehash_table.maxSize;
+        this.size = rehash_table.size;
+    }
+
+    private void insertInFront (int idx, HashEntry entry) {
+        Node newNode = new Node(entry, table[idx]);
+        table[idx] = newNode;
+        size++;
     }
 }
