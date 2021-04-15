@@ -15,8 +15,9 @@ public class HashTableOpenHashing implements Map {
      * @param maxSize the size of the table
      */
     public HashTableOpenHashing(int maxSize) {
-        // FILL IN CODE
         this.maxSize = maxSize;
+        table = new Node[maxSize];
+        size = 0;
     }
 
     /** Return true if the map contains a (key, value) pair associated with this key,

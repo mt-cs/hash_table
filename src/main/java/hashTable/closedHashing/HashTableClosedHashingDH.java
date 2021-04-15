@@ -16,8 +16,9 @@ public class HashTableClosedHashingDH implements Map {
      * @param maxSize maximum number of elements the hash table can store
      */
     public HashTableClosedHashingDH(int maxSize) {
-        // FILL IN CODE
         this.maxSize = maxSize;
+        table = new HashEntry[maxSize];
+        size = 0;
     }
 
     /** Return true if the map contains a (key, value) pair associated with this key,

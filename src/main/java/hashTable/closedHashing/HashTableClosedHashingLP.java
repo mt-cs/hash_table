@@ -2,6 +2,7 @@ package hashTable.closedHashing;
 
 import hashTable.HashEntry;
 import hashTable.Map;
+import hashTable.openHashing.Node;
 
 /** The class that implements the Map interface using closed hashing;
  *  uses linear probing to resolve collisions */
@@ -16,8 +17,9 @@ public class HashTableClosedHashingLP implements Map {
      * @param maxSize maximum number of elements the hash table can store
      */
     public HashTableClosedHashingLP(int maxSize) {
-        // FILL IN CODE
         this.maxSize = maxSize;
+        table = new HashEntry[maxSize];
+        size = 0;
     }
 
     /** Return true if the map contains a (key, value) pair associated with this key,
@@ -86,8 +88,15 @@ public class HashTableClosedHashingLP implements Map {
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        // FILL IN CODE
-
+        for (int i = 0; i < table.length; i++) {
+            sb.append(i).append(": (");
+            if (table[i] == null) {
+                sb.append("null");
+            } else {
+                sb.append(table[i].getKey()).append(table[i].getValue())
+                        .append(table[i].isDeleted()).append(")");
+            }
+        }
         return sb.toString();
     }
 
