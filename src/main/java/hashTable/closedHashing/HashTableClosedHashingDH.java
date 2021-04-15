@@ -17,7 +17,7 @@ public class HashTableClosedHashingDH implements Map {
      */
     public HashTableClosedHashingDH(int maxSize) {
         // FILL IN CODE
-
+        this.maxSize = maxSize;
     }
 
     /** Return true if the map contains a (key, value) pair associated with this key,

@@ -2,9 +2,12 @@ package hashTable.openHashing;
 import hashTable.HashEntry;
 import hashTable.Map;
 
+import java.util.HashMap;
+
+// check java source code
 public class HashTableOpenHashing implements Map {
-    private Node[] table ;
-    private int maxSize;
+    private Node[] table ; // this node is the head of the LinkedList
+    private int maxSize; // prime number
     private int size;
 
     /** Constructor for class HashTableOpenHashing
@@ -13,7 +16,7 @@ public class HashTableOpenHashing implements Map {
      */
     public HashTableOpenHashing(int maxSize) {
         // FILL IN CODE
-
+        this.maxSize = maxSize;
     }
 
     /** Return true if the map contains a (key, value) pair associated with this key,
@@ -24,7 +27,6 @@ public class HashTableOpenHashing implements Map {
      */
     public boolean containsKey(String key) {
         // FILL IN CODE
-
         return false; // change
     }
 

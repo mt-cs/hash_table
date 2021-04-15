@@ -17,6 +17,7 @@ public class HashTableClosedHashingLP implements Map {
      */
     public HashTableClosedHashingLP(int maxSize) {
         // FILL IN CODE
+        this.maxSize = maxSize;
     }
 
     /** Return true if the map contains a (key, value) pair associated with this key,
@@ -42,7 +43,7 @@ public class HashTableClosedHashingLP implements Map {
     @Override
     public void put(String key, Object value) {
         // FILL IN CODE
-
+    // check load factor rehashing
     }
 
     /** Return the value associated with the given key or null, if the map does not contain the key.
