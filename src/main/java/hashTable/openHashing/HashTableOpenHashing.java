@@ -35,7 +35,7 @@ public class HashTableOpenHashing implements Map {
      * Will replace previous value that this key was mapped to.
      * If key is null, throw IllegalArgumentException.
      *
-     * @param key
+     * @param key associated key
      * @param value associated value
      */
     public void put(String key, Object value) {
@@ -53,19 +53,8 @@ public class HashTableOpenHashing implements Map {
                 size++;
             }
         } else {
-            maxSize = hf.getNewSize();
-            Node [] temp = table;
-            for (int i = 0; i < maxSize; i++) {
-                table[i] = null;
-            }
-            for (int i = 0; i < temp.length; i++) {
-
-            }
-
+            rehash(hf);
         }
-
-
-
     }
 
     /** Return the value associated with the given key or null, if the map does not contain the key.
@@ -112,5 +101,21 @@ public class HashTableOpenHashing implements Map {
 
     // Add may implement other helper methods as needed
 
-
+    /**
+     * A helper me to rehash table to a new maxSize
+     * @param hf HashFunction
+     */
+    private void rehash (HashFunction hf) {
+        maxSize = hf.getNewSize();
+        Node [] temp = table;
+        HashTableOpenHashing rehash_table = new HashTableOpenHashing(maxSize);
+        for (Node node : temp) {
+            Node current = node;
+            while (current != null) {
+                rehash_table.put(current.entry().getKey(), current.entry().getValue());
+                current = current.next();
+            }
+        }
+        this.table = rehash_table.table;
+    }
 }
