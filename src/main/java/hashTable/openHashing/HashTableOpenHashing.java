@@ -2,9 +2,7 @@ package hashTable.openHashing;
 import hashTable.HashEntry;
 import hashTable.Map;
 import hashTable.HashFunction;
-import java.util.HashMap;
 
-// check java source code
 public class HashTableOpenHashing implements Map {
     private Node[] table ; // this node is the head of the LinkedList
     private int maxSize; // prime number
@@ -50,13 +48,14 @@ public class HashTableOpenHashing implements Map {
     public void put(String key, Object value) {
         HashEntry entry = new HashEntry(key, value);
         // HashFunction hf = new HashFunction(maxSize);
+        // If the key is in the table, you should just replace the value for this key.
         int idx;
         if (hf.loadFactor(size) <= 0.6) {
             idx = hf.hashFunction(key);
             if (table[idx] == null) {
                 Node head = new Node(entry);
                 table[idx] = head;
-                size ++;
+                size++;
             } else {
                 insertInFront(idx, entry);
             }
@@ -65,6 +64,7 @@ public class HashTableOpenHashing implements Map {
             idx = hf.hashFunction(key);
             insertInFront(idx, entry);
         }
+
     }
 
     /** Return the value associated with the given key or null, if the map does not contain the key.
@@ -77,9 +77,6 @@ public class HashTableOpenHashing implements Map {
         if (key == null) {
             throw new IllegalArgumentException("Key is null");
         }
-//        if (!containsKey(key)) {
-//            return null;
-//        }
         int idx = hf.hashFunction(key);
         Node current = this.table[idx];
         while (current != null) {
@@ -97,9 +94,33 @@ public class HashTableOpenHashing implements Map {
      * @return previous value
      */
     public Object remove(String key) {
-        // FILL IN CODE
+        if (!containsKey(key)) {
+            return null;
+        }
+        int idx = hf.hashFunction(key);
+        String val = null;
 
-        return null; // change
+        Node current = this.table[idx];
+        if (current.entry().getKey().equals(key)) { // Remove head
+            val = (String) current.entry().getValue();
+            this.table[idx] = current.next();
+            size--;
+        }
+        else {
+            Node prev = null;
+            while (current != null) {
+                if (current.entry().getKey().equals(key)) {
+                    val = (String) current.entry().getValue();
+                    if (prev != null) {
+                        prev.setNext(current.next());
+                        size--;
+                    }
+                }
+                prev = current;
+                current = current.next();
+            }
+        }
+        return val;
     }
 
     /** Return the actual number of elements in the map.
@@ -154,7 +175,6 @@ public class HashTableOpenHashing implements Map {
             }
         }
         this.table = rehash_table.table;
-        this.maxSize = rehash_table.maxSize;
         this.size = rehash_table.size;
         this.hf = rehash_table.hf;
     }

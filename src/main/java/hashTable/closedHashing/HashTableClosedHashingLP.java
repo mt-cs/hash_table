@@ -1,7 +1,9 @@
 package hashTable.closedHashing;
 
 import hashTable.HashEntry;
+import hashTable.HashFunction;
 import hashTable.Map;
+import hashTable.openHashing.HashTableOpenHashing;
 import hashTable.openHashing.Node;
 
 /** The class that implements the Map interface using closed hashing;
@@ -10,7 +12,7 @@ public class HashTableClosedHashingLP implements Map {
     private HashEntry[] table; // hash table
     private int maxSize;
     private int size; // the number of elements currently in the hash table
-
+    HashFunction hf;
 
     /** Constructor for class HashTableClosedHashingLP.
      *  Creates a hash table of the given size.
@@ -20,6 +22,7 @@ public class HashTableClosedHashingLP implements Map {
         this.maxSize = maxSize;
         table = new HashEntry[maxSize];
         size = 0;
+        hf = new HashFunction(maxSize);
     }
 
     /** Return true if the map contains a (key, value) pair associated with this key,
@@ -44,8 +47,39 @@ public class HashTableClosedHashingLP implements Map {
      */
     @Override
     public void put(String key, Object value) {
-        // FILL IN CODE
-    // check load factor rehashing
+        HashEntry entry = new HashEntry(key, value);
+        int idx = hf.hashFunction(key);
+        if (hf.loadFactor(size) <= 0.6) {
+            if (table[idx] == null || table[idx].isDeleted()) {
+                table[idx] = entry;
+                size++;
+                if (table[idx].isDeleted()) {
+                    table[idx].setDeleted(false);
+                }
+            }
+            else {
+                idx = linearProbing(idx);
+                if (idx == 0) {
+                    rehash();
+                    idx = hf.hashFunction(key);
+
+                }
+                table[idx] = entry;
+                size++;
+                if (table[idx].isDeleted()) {
+                    table[idx].setDeleted(false);
+                }
+            }
+        } else {
+            rehash();
+            idx = hf.hashFunction(key);
+            table[idx] = entry;
+            size++;
+            if (table[idx].isDeleted()) {
+                table[idx].setDeleted(false);
+            }
+        }
+
     }
 
     /** Return the value associated with the given key or null, if the map does not contain the key.
@@ -102,5 +136,34 @@ public class HashTableClosedHashingLP implements Map {
     }
 
     // Add may implement other helper methods as needed
+    private int linearProbing (int idx) {
+        for (int i = idx; i < maxSize; i++) {
+            if (table[i] == null || table[idx].isDeleted()) {
+                return i;
+            }
+        }
+        for (int i = 0; i < idx; i++) {
+            if (table[i] == null || table[idx].isDeleted()) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * A helper me to rehash table to a new maxSize
+     */
+    private void rehash () {
+        maxSize = hf.getNewSize();
+        HashEntry[] temp = table;
+
+        HashTableClosedHashingLP rehash_table = new HashTableClosedHashingLP(maxSize);
+        for (HashEntry entry : temp) {
+            rehash_table.put(entry.getKey(), entry.getValue());
+        }
+        this.table = rehash_table.table;
+        this.size = rehash_table.size;
+        this.hf = rehash_table.hf;
+    }
 
 }
