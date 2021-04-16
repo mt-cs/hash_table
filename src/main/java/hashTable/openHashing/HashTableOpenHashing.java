@@ -77,9 +77,9 @@ public class HashTableOpenHashing implements Map {
         if (key == null) {
             throw new IllegalArgumentException("Key is null");
         }
-        if (!containsKey(key)) {
-            return null;
-        }
+//        if (!containsKey(key)) {
+//            return null;
+//        }
         int idx = hf.hashFunction(key);
         Node current = this.table[idx];
         while (current != null) {
