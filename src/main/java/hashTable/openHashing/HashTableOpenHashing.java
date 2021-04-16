@@ -9,6 +9,7 @@ public class HashTableOpenHashing implements Map {
     private Node[] table ; // this node is the head of the LinkedList
     private int maxSize; // prime number
     private int size;
+    HashFunction hf;
 
     /** Constructor for class HashTableOpenHashing
      *
@@ -18,16 +19,25 @@ public class HashTableOpenHashing implements Map {
         this.maxSize = maxSize;
         table = new Node[maxSize];
         size = 0;
+        hf = new HashFunction(maxSize);
     }
 
     /** Return true if the map contains a (key, value) pair associated with this key,
      *  otherwise return false.
      *
-     * @param key  key
+     * @param key key
      * @return true if the key (and the corresponding value) is the in map
      */
     public boolean containsKey(String key) {
-        // FILL IN CODE
+        for (Node node : this.table) {
+            Node current = node;
+            while (current != null) {
+                if (current.entry().getKey().equals(key)) {
+                    return true;
+                }
+                current = current.next();
+            }
+        }
         return false; // change
     }
 
@@ -40,7 +50,7 @@ public class HashTableOpenHashing implements Map {
      */
     public void put(String key, Object value) {
         HashEntry entry = new HashEntry(key, value);
-        HashFunction hf = new HashFunction(maxSize);
+        // HashFunction hf = new HashFunction(maxSize);
         int idx;
         if (hf.loadFactor(size) <= 0.6) {
             idx = hf.hashFunction(key);
@@ -52,7 +62,7 @@ public class HashTableOpenHashing implements Map {
                 insertInFront(idx, entry);
             }
         } else {
-            rehash(hf);
+            rehash();
             idx = hf.hashFunction(key);
             insertInFront(idx, entry);
         }
@@ -118,13 +128,10 @@ public class HashTableOpenHashing implements Map {
         return sb.toString();
     }
 
-    // Add may implement other helper methods as needed
-
     /**
      * A helper me to rehash table to a new maxSize
-     * @param hf HashFunction
      */
-    private void rehash (HashFunction hf) {
+    private void rehash () {
         maxSize = hf.getNewSize();
         Node [] temp = table;
         HashTableOpenHashing rehash_table = new HashTableOpenHashing(maxSize);
@@ -138,6 +145,7 @@ public class HashTableOpenHashing implements Map {
         this.table = rehash_table.table;
         this.maxSize = rehash_table.maxSize;
         this.size = rehash_table.size;
+        this.hf = rehash_table.hf;
     }
 
     private void insertInFront (int idx, HashEntry entry) {

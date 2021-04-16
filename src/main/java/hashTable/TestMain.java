@@ -27,5 +27,7 @@ public class TestMain {
         map.put("seven", "siete");
         map.put("rehash", "timeToRehash");
         System.out.println(map.toString());
+        System.out.println(map.containsKey("one"));
+        System.out.println(map.containsKey("bitcoin"));
     }
 }
