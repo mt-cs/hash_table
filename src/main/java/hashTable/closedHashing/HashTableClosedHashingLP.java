@@ -64,7 +64,7 @@ public class HashTableClosedHashingLP implements Map {
      * Will replace previous value that this key was mapped to.
      * If key is null, throw IllegalArgumentException.
      *
-     * @param key
+     * @param key ne key to be inserted
      * @param value associated value
      */
     @Override
@@ -72,34 +72,21 @@ public class HashTableClosedHashingLP implements Map {
         HashEntry entry = new HashEntry(key, value);
         int idx = hf.hashFunction(key);
         if (hf.loadFactor(size) <= 0.6) {
-            if (table[idx] == null || table[idx].isDeleted()) {
-                table[idx] = entry;
-                size++;
-                if (table[idx].isDeleted()) {
-                    table[idx].setDeleted(false);
-                }
-            }
-            else {
+            if (table[idx] != null && !table[idx].isDeleted()) {
                 idx = linearProbing(idx);
                 if (idx == 0) {
                     rehash();
                     idx = hf.hashFunction(key);
-
-                }
-                table[idx] = entry;
-                size++;
-                if (table[idx].isDeleted()) {
-                    table[idx].setDeleted(false);
                 }
             }
         } else {
             rehash();
             idx = hf.hashFunction(key);
-            table[idx] = entry;
-            size++;
-            if (table[idx].isDeleted()) {
-                table[idx].setDeleted(false);
-            }
+        }
+        table[idx] = entry;
+        size++;
+        if (table[idx].isDeleted()) {
+            table[idx].setDeleted(false);
         }
 
     }
@@ -112,8 +99,33 @@ public class HashTableClosedHashingLP implements Map {
      */
     @Override
     public Object get(String key) {
-        // FILL IN CODE
+        if (key == null) {
+            throw new IllegalArgumentException("Key is null");
+        }
+        if (!containsKey(key)) {
+            return null;
+        }
+        int idx = hf.hashFunction(key);
+        if (this.table[idx] == null || this.table[idx].isDeleted()) {
+            return null;
+        }
+        for (int i = idx; i < maxSize; i++) {
+            if (table[i] == null) {
+                return null;
+            }
+            if (this.table[i].getKey().equals(key)) {
+                return this.table[i].getValue();
+            }
+        }
 
+        for (int i = 0; i < idx; i++) {
+            if (table[i] == null) {
+                return null;
+            }
+            if (this.table[i].getKey().equals(key)) {
+                return this.table[i].getValue();
+            }
+        }
         return null;
     }
 

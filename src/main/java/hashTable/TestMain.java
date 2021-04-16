@@ -30,12 +30,13 @@ public class TestMain {
         mapLP.put("four", "cuantro");
         mapLP.put("five", "cinco");
         mapLP.put("six", "seis");
-//        mapLP.put("seven", "siete");
-//        mapLP.put("rehash", "timeToRehash");
+        mapLP.put("seven", "siete");
+        mapLP.put("rehash", "timeToRehash");
 
         System.out.println(mapLP.toString());
         System.out.println(mapLP.containsKey("one"));
         System.out.println(mapLP.containsKey("five"));
         System.out.println(mapLP.containsKey("Lodie"));
+        System.out.println(mapLP.get("one"));
     }
 }
