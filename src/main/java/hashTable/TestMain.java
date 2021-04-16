@@ -29,5 +29,6 @@ public class TestMain {
         System.out.println(map.toString());
         System.out.println(map.containsKey("one"));
         System.out.println(map.containsKey("bitcoin"));
+        System.out.println((String) map.get("five"));
     }
 }

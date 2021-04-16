@@ -75,9 +75,21 @@ public class HashTableOpenHashing implements Map {
      * @return value associated value
      */
     public Object get(String key) {
-        // FILL IN CODE
-
-        return null; // change
+        if (key == null) {
+            throw new IllegalArgumentException("Key is null");
+        }
+        if (!containsKey(key)) {
+            return null;
+        }
+        int idx = hf.hashFunction(key);
+        Node current = this.table[idx];
+        while (current != null) {
+            if (current.entry().getKey().equals(key)) {
+                return current.entry().getValue();
+            }
+            current = current.next();
+        }
+        return null;
     }
 
     /** Remove a (key, value) entry if it exists.
