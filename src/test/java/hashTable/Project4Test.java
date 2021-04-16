@@ -168,7 +168,6 @@ public class Project4Test {
         if (!expected1.equals(actual) && !expected2.equals(actual) && !expected1.equals(actual.trim()) && !expected2.equals(actual.trim())) {
             System.out.println("Your string = " + System.lineSeparator() + actual);
             Assert.fail("The string returned by your program did not match any of strings that are considered correct representation of the hash table.");
-
         }
     }
 

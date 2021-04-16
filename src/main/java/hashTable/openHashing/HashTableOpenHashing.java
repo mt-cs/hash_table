@@ -95,7 +95,25 @@ public class HashTableOpenHashing implements Map {
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        // FILL IN CODE
+
+        for (int i = 0; i < this.table.length; i++) {
+            sb.append(i).append(": ");
+            if (table[i] == null) {
+                sb.append("null\n");
+            } else {
+                Node current = this.table[i];
+                while (current != null) {
+                    sb.append("(").append(current.entry().getKey()).append(", ").
+                            append(current.entry().getValue()).append(", ").
+                            append(current.entry().isDeleted()).append(")");
+                    current = current.next();
+                    if (current != null) {
+                        sb.append(", ");
+                    }
+                }
+                sb.append("\n");
+            }
+        }
 
         return sb.toString();
     }

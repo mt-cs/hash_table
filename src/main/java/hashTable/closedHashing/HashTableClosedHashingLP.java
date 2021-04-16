@@ -89,12 +89,13 @@ public class HashTableClosedHashingLP implements Map {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < table.length; i++) {
-            sb.append(i).append(": (");
+            sb.append(i).append(": ");
             if (table[i] == null) {
-                sb.append("null");
+                sb.append("null\n");
             } else {
-                sb.append(table[i].getKey()).append(table[i].getValue())
-                        .append(table[i].isDeleted()).append(")");
+                sb.append("(").append(table[i].getKey()).append(", ")
+                        .append(table[i].getValue()).append(", ")
+                        .append(table[i].isDeleted()).append(")\n");
             }
         }
         return sb.toString();

@@ -26,5 +26,6 @@ public class TestMain {
         map.put("six", "seis");
         map.put("seven", "siete");
         map.put("rehash", "timeToRehash");
+        System.out.println(map.toString());
     }
 }
