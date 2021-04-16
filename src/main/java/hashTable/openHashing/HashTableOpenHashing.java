@@ -29,16 +29,15 @@ public class HashTableOpenHashing implements Map {
      * @return true if the key (and the corresponding value) is the in map
      */
     public boolean containsKey(String key) {
-        for (Node node : this.table) {
-            Node current = node;
-            while (current != null) {
-                if (current.entry().getKey().equals(key)) {
-                    return true;
-                }
-                current = current.next();
+        int idx = hf.hashFunction(key);
+        Node current = this.table[idx];
+        while (current != null) {
+            if (current.entry().getKey().equals(key)) {
+                return true;
             }
+            current = current.next();
         }
-        return false; // change
+        return false;
     }
 
     /** Add (key, value) to the map.
