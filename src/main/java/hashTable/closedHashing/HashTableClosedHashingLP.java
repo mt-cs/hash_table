@@ -159,7 +159,9 @@ public class HashTableClosedHashingLP implements Map {
 
         HashTableClosedHashingLP rehash_table = new HashTableClosedHashingLP(maxSize);
         for (HashEntry entry : temp) {
-            rehash_table.put(entry.getKey(), entry.getValue());
+            if (entry != null) {
+                rehash_table.put(entry.getKey(), entry.getValue());
+            }
         }
         this.table = rehash_table.table;
         this.size = rehash_table.size;

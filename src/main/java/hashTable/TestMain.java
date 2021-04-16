@@ -30,6 +30,8 @@ public class TestMain {
         mapLP.put("four", "cuantro");
         mapLP.put("five", "cinco");
         mapLP.put("six", "seis");
+        mapLP.put("seven", "siete");
+        mapLP.put("rehash", "timeToRehash");
 
         System.out.println(mapLP.toString());
 
