@@ -33,8 +33,30 @@ public class HashTableClosedHashingLP implements Map {
      */
     @Override
     public boolean containsKey(String key) {
-        // FILL IN CODE
+        int idx = hf.hashFunction(key);
+        if (this.table[idx] == null || this.table[idx].isDeleted()) {
+            return false;
+        }
+        return linearProbSearch(idx, key);
+    }
 
+    private boolean linearProbSearch (int idx, String key) {
+        for (int i = idx; i < maxSize; i++) {
+            if (table[i] == null) {
+                return false;
+            }
+            if (this.table[i].getKey().equals(key)) {
+                return true;
+            }
+        }
+        for (int i = 0; i < idx; i++) {
+            if (table[i] == null) {
+                return false;
+            }
+            if (this.table[i].getKey().equals(key)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -135,7 +157,11 @@ public class HashTableClosedHashingLP implements Map {
         return sb.toString();
     }
 
-    // Add may implement other helper methods as needed
+    /**
+     * A helper method for insertion to do linear probing and find the next empty index
+     * @param idx current index
+     * @return idx new integer index
+     */
     private int linearProbing (int idx) {
         for (int i = idx; i < maxSize; i++) {
             if (table[i] == null || table[idx].isDeleted()) {
