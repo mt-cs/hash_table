@@ -12,7 +12,7 @@ public class HashTableClosedHashingLP implements Map {
     private HashEntry[] table; // hash table
     private int maxSize;
     private int size; // the number of elements currently in the hash table
-    HashFunction hf;
+    private HashFunction hf;
 
     /** Constructor for class HashTableClosedHashingLP.
      *  Creates a hash table of the given size.
@@ -33,16 +33,16 @@ public class HashTableClosedHashingLP implements Map {
      */
     @Override
     public boolean containsKey(String key) {
-        int idx = hf.hashFunction(key);
+        int idx = hf.hash(key);
         if (this.table[idx] == null || this.table[idx].isDeleted()) {
             return false;
         }
-        return linearProbSearch(idx, key);
+        return searchContains (idx, key);
     }
 
-    private boolean linearProbSearch (int idx, String key) {
+    private boolean searchContains (int idx, String key) { // TODO: rename, combine the two loops
         for (int i = idx; i < maxSize; i++) {
-            if (table[i] == null) {
+            if (table[i] == null || table[i].isDeleted()) {
                 return false;
             }
             if (this.table[i].getKey().equals(key)) {
@@ -50,7 +50,7 @@ public class HashTableClosedHashingLP implements Map {
             }
         }
         for (int i = 0; i < idx; i++) {
-            if (table[i] == null) {
+            if (table[i] == null || table[i].isDeleted()) {
                 return false;
             }
             if (this.table[i].getKey().equals(key)) {
@@ -69,19 +69,21 @@ public class HashTableClosedHashingLP implements Map {
      */
     @Override
     public void put(String key, Object value) {
+        // TODO: if key is already there change the value to the new value
+        // check the existing method
         HashEntry entry = new HashEntry(key, value);
-        int idx = hf.hashFunction(key);
-        if (hf.loadFactor(size) <= 0.6) {
+        int idx = hf.hash(key);
+        if (hf.getLoadFactor(size) <= 0.6) {
             if (table[idx] != null && !table[idx].isDeleted()) {
-                idx = linearProbing(idx);
+                idx = searchEmptyIndex(idx);
                 if (idx == 0) {
                     rehash();
-                    idx = hf.hashFunction(key);
+                    idx = hf.hash(key);
                 }
             }
         } else {
             rehash();
-            idx = hf.hashFunction(key);
+            idx = hf.hash(key);
         }
         table[idx] = entry;
         size++;
@@ -102,15 +104,13 @@ public class HashTableClosedHashingLP implements Map {
         if (key == null) {
             throw new IllegalArgumentException("Key is null");
         }
-        if (!containsKey(key)) {
-            return null;
-        }
-        int idx = hf.hashFunction(key);
+
+        int idx = hf.hash(key);
         if (this.table[idx] == null || this.table[idx].isDeleted()) {
             return null;
         }
         for (int i = idx; i < maxSize; i++) {
-            if (table[i] == null) {
+            if (table[i] == null || table[i].isDeleted()) {
                 return null;
             }
             if (this.table[i].getKey().equals(key)) {
@@ -119,7 +119,7 @@ public class HashTableClosedHashingLP implements Map {
         }
 
         for (int i = 0; i < idx; i++) {
-            if (table[i] == null) {
+            if (table[i] == null || table[i].isDeleted()) {
                 return null;
             }
             if (this.table[i].getKey().equals(key)) {
@@ -136,8 +136,33 @@ public class HashTableClosedHashingLP implements Map {
      */
     @Override
     public Object remove(String key) {
-        // FILL IN CODE
+        if (!containsKey(key)) {
+            return null;
+        }
+        int idx = hf.hash(key);
 
+        if (this.table[idx] == null || this.table[idx].isDeleted()) {
+            return null;
+        }
+        for (int i = idx; i < maxSize; i++) {
+            if (table[i] == null || table[i].isDeleted()) {
+                return null;
+            }
+            if (this.table[i].getKey().equals(key)) {
+                table[i].setDeleted(true);
+                return this.table[i].getValue();
+            }
+        }
+
+        for (int i = 0; i < idx; i++) {
+            if (table[i] == null || table[i].isDeleted()) {
+                return null;
+            }
+            if (this.table[i].getKey().equals(key)) {
+                table[i].setDeleted(true);
+                return this.table[i].getValue();
+            }
+        }
         return null;
     }
 
@@ -174,7 +199,7 @@ public class HashTableClosedHashingLP implements Map {
      * @param idx current index
      * @return idx new integer index
      */
-    private int linearProbing (int idx) {
+    private int searchEmptyIndex (int idx) {
         for (int i = idx; i < maxSize; i++) {
             if (table[i] == null || table[idx].isDeleted()) {
                 return i;

@@ -7,7 +7,7 @@ public class HashTableOpenHashing implements Map {
     private Node[] table ; // this node is the head of the LinkedList
     private int maxSize; // prime number
     private int size;
-    HashFunction hf;
+    private HashFunction hf;
 
     /** Constructor for class HashTableOpenHashing
      *
@@ -27,7 +27,7 @@ public class HashTableOpenHashing implements Map {
      * @return true if the key (and the corresponding value) is the in map
      */
     public boolean containsKey(String key) {
-        int idx = hf.hashFunction(key);
+        int idx = hf.hash(key);
         Node current = this.table[idx];
         while (current != null) {
             if (current.entry().getKey().equals(key)) {
@@ -46,12 +46,16 @@ public class HashTableOpenHashing implements Map {
      * @param value associated value
      */
     public void put(String key, Object value) {
+
+        if (get(key) != null) {
+            // HashFunction hf = new HashFunction(maxSize);
+            // If the key is in the table, you should just replace the value for this key.
+        }
+
         HashEntry entry = new HashEntry(key, value);
-        // HashFunction hf = new HashFunction(maxSize);
-        // If the key is in the table, you should just replace the value for this key.
         int idx;
-        if (hf.loadFactor(size) <= 0.6) {
-            idx = hf.hashFunction(key);
+        if (hf.getLoadFactor(size) <= 0.6) {
+            idx = hf.hash(key);
             if (table[idx] == null) {
                 Node head = new Node(entry);
                 table[idx] = head;
@@ -61,7 +65,7 @@ public class HashTableOpenHashing implements Map {
             }
         } else {
             rehash();
-            idx = hf.hashFunction(key);
+            idx = hf.hash(key);
             insertInFront(idx, entry);
         }
 
@@ -77,7 +81,7 @@ public class HashTableOpenHashing implements Map {
         if (key == null) {
             throw new IllegalArgumentException("Key is null");
         }
-        int idx = hf.hashFunction(key);
+        int idx = hf.hash(key);
         Node current = this.table[idx];
         while (current != null) {
             if (current.entry().getKey().equals(key)) {
@@ -97,7 +101,7 @@ public class HashTableOpenHashing implements Map {
         if (!containsKey(key)) {
             return null;
         }
-        int idx = hf.hashFunction(key);
+        int idx = hf.hash(key);
         String val = null;
 
         Node current = this.table[idx];

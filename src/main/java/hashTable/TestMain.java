@@ -6,8 +6,8 @@ import hashTable.openHashing.HashTableOpenHashing;
 public class TestMain {
     public static void main(String[] args) {
         HashFunction hf = new HashFunction(13);
-        System.out.println(hf.hashFunction("hello"));
-        System.out.println(hf.loadFactor(7));
+        System.out.println(hf.hash("hello"));
+        System.out.println(hf.getLoadFactor(7));
 
 //        Map map = new HashTableOpenHashing(11);
 //        map.put("one", "uno");

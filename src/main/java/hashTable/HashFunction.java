@@ -21,7 +21,7 @@ public class HashFunction {
      * @param key String key
      * @return bInt BigInteger key
      */
-    private BigInteger hashCode (String key) {
+    private BigInteger getHashCode (String key) {
         BigInteger a = BigInteger.valueOf(33);
         char c;
         BigInteger bInt = BigInteger.valueOf(0);
@@ -38,8 +38,8 @@ public class HashFunction {
      * @param key String key
      * @return return key % max_size.
      */
-    public int hashFunction (String key) {
-        BigInteger bigInteger = hashCode(key);
+    public int hash (String key) {
+        BigInteger bigInteger = getHashCode(key);
         return bigInteger.mod(BigInteger.valueOf(max_size)).intValue();
     }
 
@@ -48,7 +48,7 @@ public class HashFunction {
      * @param num_entries number of entries in the table
      * @return the number of entries divided by the maximum size of the table.
      */
-    public double loadFactor (int num_entries) {
+    public double getLoadFactor (int num_entries) {
         return (double) num_entries / max_size;
     }
 
@@ -56,7 +56,7 @@ public class HashFunction {
      * @return new size is the smallest prime number that is larger than 2*max_size.
      */
     public int getNewSize (){
-        return closestPrime(max_size * 2);
+        return getClosestPrime(max_size * 2);
     }
 
     /**
@@ -64,7 +64,7 @@ public class HashFunction {
      * @param num is 2 * max_size
      * @return the smallest prime number that is larger than num
      */
-    private int closestPrime (int num) {
+    private int getClosestPrime (int num) {
         int prime_below = 0;
         for (int i = num - 1; i >= 1; i--) {
             if (isPrime(i)) {
@@ -94,7 +94,4 @@ public class HashFunction {
             return false;
         } else return Math.ceil(Math.sqrt(num)) - Math.floor(Math.sqrt(num)) != 0;
     }
-
-
-
 }
