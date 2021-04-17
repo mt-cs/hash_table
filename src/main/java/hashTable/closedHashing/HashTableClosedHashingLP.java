@@ -37,19 +37,15 @@ public class HashTableClosedHashingLP implements Map {
         if (this.table[idx] == null || this.table[idx].isDeleted()) {
             return false;
         }
-        return searchContains (idx, key);
+        if (this.table[idx].getKey().equals(key)) {
+            return true;
+        }
+        return searchLPContains (idx, key);
     }
 
-    private boolean searchContains (int idx, String key) { // TODO: rename, combine the two loops
-        for (int i = idx; i < maxSize; i++) {
-            if (table[i] == null || table[i].isDeleted()) {
-                return false;
-            }
-            if (this.table[i].getKey().equals(key)) {
-                return true;
-            }
-        }
-        for (int i = 0; i < idx; i++) {
+    private boolean searchLPContains (int idx, String key) {
+        // (idx + 1) % maxSize
+        for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
             if (table[i] == null || table[i].isDeleted()) {
                 return false;
             }
@@ -69,8 +65,7 @@ public class HashTableClosedHashingLP implements Map {
      */
     @Override
     public void put(String key, Object value) {
-        // TODO: if key is already there change the value to the new value
-        // check the existing method
+        // TODO: if key is already there change the value to the new value, check the existing method
         HashEntry entry = new HashEntry(key, value);
         int idx = hf.hash(key);
         if (hf.getLoadFactor(size) <= 0.6) {
@@ -109,16 +104,11 @@ public class HashTableClosedHashingLP implements Map {
         if (this.table[idx] == null || this.table[idx].isDeleted()) {
             return null;
         }
-        for (int i = idx; i < maxSize; i++) {
-            if (table[i] == null || table[i].isDeleted()) {
-                return null;
-            }
-            if (this.table[i].getKey().equals(key)) {
-                return this.table[i].getValue();
-            }
+        if (this.table[idx].getKey().equals(key)) {
+            return this.table[idx].getValue();
         }
 
-        for (int i = 0; i < idx; i++) {
+        for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
             if (table[i] == null || table[i].isDeleted()) {
                 return null;
             }
@@ -144,7 +134,13 @@ public class HashTableClosedHashingLP implements Map {
         if (this.table[idx] == null || this.table[idx].isDeleted()) {
             return null;
         }
-        for (int i = idx; i < maxSize; i++) {
+        if (this.table[idx].getKey().equals(key)) {
+            table[idx].setDeleted(true);
+            return this.table[idx].getValue();
+        }
+
+        for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
+            //removeAtIndex(key, i);
             if (table[i] == null || table[i].isDeleted()) {
                 return null;
             }
@@ -153,15 +149,16 @@ public class HashTableClosedHashingLP implements Map {
                 return this.table[i].getValue();
             }
         }
+        return null;
+    }
 
-        for (int i = 0; i < idx; i++) {
-            if (table[i] == null || table[i].isDeleted()) {
-                return null;
-            }
-            if (this.table[i].getKey().equals(key)) {
-                table[i].setDeleted(true);
-                return this.table[i].getValue();
-            }
+    private Object removeAtIndex(String key, int curIdx) {
+        if (table[curIdx] == null || table[curIdx].isDeleted()) {
+            return null;
+        }
+        if (this.table[curIdx].getKey().equals(key)) {
+            table[curIdx].setDeleted(true);
+            return this.table[curIdx].getValue();
         }
         return null;
     }
@@ -200,12 +197,10 @@ public class HashTableClosedHashingLP implements Map {
      * @return idx new integer index
      */
     private int searchEmptyIndex (int idx) {
-        for (int i = idx; i < maxSize; i++) {
-            if (table[i] == null || table[idx].isDeleted()) {
-                return i;
-            }
+        if (table[idx] == null || table[idx].isDeleted()) {
+            return idx;
         }
-        for (int i = 0; i < idx; i++) {
+        for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
             if (table[i] == null || table[idx].isDeleted()) {
                 return i;
             }
