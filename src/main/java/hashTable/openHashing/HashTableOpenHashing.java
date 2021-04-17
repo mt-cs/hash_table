@@ -171,7 +171,7 @@ public class HashTableOpenHashing implements Map {
         HashTableOpenHashing rehash_table = new HashTableOpenHashing(maxSize);
         for (Node node : temp) {
             Node current = node;
-            while (current != null) {
+            while (current != null && !current.entry().isDeleted()) {
                 rehash_table.put(current.entry().getKey(), current.entry().getValue());
                 current = current.next();
             }

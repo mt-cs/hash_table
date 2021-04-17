@@ -49,6 +49,9 @@ public class HashTableClosedHashingLP implements Map {
                 return false;
             }
             if (this.table[i].getKey().equals(key)) {
+                if (this.table[idx].isDeleted()) {
+                    return false;
+                }
                 return true;
             }
         }
@@ -103,6 +106,9 @@ public class HashTableClosedHashingLP implements Map {
             return null;
         }
         if (this.table[idx].getKey().equals(key)) {
+            if (this.table[idx].isDeleted()) {
+                return null;
+            }
             return this.table[idx].getValue();
         }
 
@@ -204,7 +210,7 @@ public class HashTableClosedHashingLP implements Map {
 
         HashTableClosedHashingLP rehash_table = new HashTableClosedHashingLP(maxSize);
         for (HashEntry entry : temp) {
-            if (entry != null) {
+            if (entry != null && !entry.isDeleted()) {
                 rehash_table.put(entry.getKey(), entry.getValue());
             }
         }

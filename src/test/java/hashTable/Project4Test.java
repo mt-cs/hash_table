@@ -103,7 +103,6 @@ public class Project4Test {
         String s2 = (String) map.get("two");
         Assert.assertEquals("Expected to get \"cinco\" for the key \"five\"", "cinco", s1);
         Assert.assertEquals("Expected to get \"do\" for the key \"two\"", "do", s2);
-
     }
 
     @Test

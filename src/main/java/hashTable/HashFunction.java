@@ -16,24 +16,6 @@ public class HashFunction {
     }
 
     /**
-     * compute the hash code of a string,
-     * using a polynomial rolling hash function
-     * @param key String key
-     * @return bInt BigInteger key
-     */
-    private BigInteger getHashCode (String key) {
-        BigInteger a = BigInteger.valueOf(33);
-        char c;
-        BigInteger bInt = BigInteger.valueOf(0);
-        for (int i = 0; i < key.length(); i++)
-        {
-            c = key.charAt(i);
-            bInt = BigInteger.valueOf(c).add(bInt.multiply(a));
-        }
-        return bInt;
-    }
-
-    /**
      * Compress the bigInt value so that it is in the range from 0 to max_size
      * @param key String key
      * @return return key % max_size.
@@ -41,6 +23,17 @@ public class HashFunction {
     public int hash (String key) {
         BigInteger bigInteger = getHashCode(key);
         return bigInteger.mod(BigInteger.valueOf(max_size)).intValue();
+    }
+
+    /**
+     * A secondary hash function d(k) to resolve collisions.
+     * @param key
+     * @return
+     */
+    public int getSecondHash (String key) {
+        BigInteger bigInteger = getHashCode(key);
+        int q = getClosestPrime(max_size / 2 + 1);
+        return q - (bigInteger.mod(BigInteger.valueOf(q)).intValue());
     }
 
     /**
@@ -60,8 +53,26 @@ public class HashFunction {
     }
 
     /**
+     * compute the hash code of a string,
+     * using a polynomial rolling hash function
+     * @param key String key
+     * @return bInt BigInteger key
+     */
+    private BigInteger getHashCode (String key) {
+        BigInteger a = BigInteger.valueOf(33);
+        char c;
+        BigInteger bInt = BigInteger.valueOf(0);
+        for (int i = 0; i < key.length(); i++)
+        {
+            c = key.charAt(i);
+            bInt = BigInteger.valueOf(c).add(bInt.multiply(a));
+        }
+        return bInt;
+    }
+
+    /**
      * Find the closest prime number.
-     * @param num is 2 * max_size
+     * @param num current int
      * @return the smallest prime number that is larger than num
      */
     private int getClosestPrime (int num) {
