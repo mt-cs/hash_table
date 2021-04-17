@@ -130,24 +130,10 @@ public class HashTableClosedHashingLP implements Map {
             return null;
         }
         int idx = hf.hash(key);
-
-        if (this.table[idx] == null || this.table[idx].isDeleted()) {
-            return null;
-        }
-        if (this.table[idx].getKey().equals(key)) {
-            table[idx].setDeleted(true);
-            return this.table[idx].getValue();
-        }
+        removeAtIndex(key, idx);
 
         for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
-            //removeAtIndex(key, i);
-            if (table[i] == null || table[i].isDeleted()) {
-                return null;
-            }
-            if (this.table[i].getKey().equals(key)) {
-                table[i].setDeleted(true);
-                return this.table[i].getValue();
-            }
+            removeAtIndex(key, i);
         }
         return null;
     }
