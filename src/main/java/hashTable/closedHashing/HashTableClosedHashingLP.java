@@ -44,7 +44,6 @@ public class HashTableClosedHashingLP implements Map {
     }
 
     private boolean searchLPContains (int idx, String key) {
-        // (idx + 1) % maxSize
         for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
             if (table[i] == null || table[i].isDeleted()) {
                 return false;
@@ -99,7 +98,6 @@ public class HashTableClosedHashingLP implements Map {
         if (key == null) {
             throw new IllegalArgumentException("Key is null");
         }
-
         int idx = hf.hash(key);
         if (this.table[idx] == null || this.table[idx].isDeleted()) {
             return null;
@@ -119,6 +117,8 @@ public class HashTableClosedHashingLP implements Map {
         return null;
     }
 
+
+
     /** Remove a (key, value) entry if it exists.
      * Return the previous value associated with the given key, otherwise return null
      * @param key key
@@ -130,21 +130,22 @@ public class HashTableClosedHashingLP implements Map {
             return null;
         }
         int idx = hf.hash(key);
-        removeAtIndex(key, idx);
-
-        for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
-            removeAtIndex(key, i);
-        }
-        return null;
-    }
-
-    private Object removeAtIndex(String key, int curIdx) {
-        if (table[curIdx] == null || table[curIdx].isDeleted()) {
+        if (table[idx] == null || table[idx].isDeleted()) {
             return null;
         }
-        if (this.table[curIdx].getKey().equals(key)) {
-            table[curIdx].setDeleted(true);
-            return this.table[curIdx].getValue();
+        if (this.table[idx].getKey().equals(key)) {
+            table[idx].setDeleted(true);
+            return this.table[idx].getValue();
+        }
+
+        for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
+            if (table[i] == null || table[i].isDeleted()) {
+                return null;
+            }
+            if (this.table[i].getKey().equals(key)) {
+                table[i].setDeleted(true);
+                return this.table[i].getValue();
+            }
         }
         return null;
     }
