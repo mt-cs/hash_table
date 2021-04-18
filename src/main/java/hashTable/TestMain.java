@@ -30,12 +30,15 @@ public class TestMain {
         System.out.println("Contains 'one' --> expected true, result: " + map.containsKey("one"));
         System.out.println("Contains 'bitcoin' --> expected false, result: " + map.containsKey("bitcoin"));
         System.out.println("Get 'five' --> expected 5, result: " + map.get("five"));
+
         map.remove("five");
         System.out.println("Get 'five' --> expected null, result: " + map.get("five"));
         System.out.println("Contains 'five' --> expected false, result: " + map.containsKey("five"));
+
         map.put("five", "lima");
         System.out.println("Get 'five' --> expected lima, result: " + map.get("five"));
         System.out.println("=====================================================================\n");
+
         System.out.println("CLOSED HASHING LINEAR PROBING");
         Map mapLP = new HashTableClosedHashingLP(11);
         mapLP.put("one", "uno");
@@ -56,8 +59,8 @@ public class TestMain {
         System.out.println("Contains 'five' --> expected true, result: " + mapLP.containsKey("five"));
         System.out.println("Contains 'Lodie' --> expected false, result: " + mapLP.containsKey("Lodie"));
         System.out.println("Get 'one' --> expected satu, result: " + mapLP.get("one"));
-
         System.out.println("=====================================================================\n");
+
         System.out.println("CLOSED HASHING DOUBLE HASHING\n");
         Map mapDH = new HashTableClosedHashingDH(11);
         mapDH.put("one", "1");
@@ -73,7 +76,6 @@ public class TestMain {
         System.out.println("Contains 'six' --> expected true, result: " + mapDH.containsKey("six"));
         System.out.println("Contains 'ten' --> expected false, result: " + mapDH.containsKey("ten"));
         System.out.println("Get 'four' --> expected empat, result: " + mapDH.get("four"));
-
 
         mapDH.put("eight", "delapan");
         mapDH.put("nine", "sembilan");

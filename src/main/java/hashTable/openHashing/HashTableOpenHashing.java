@@ -65,18 +65,6 @@ public class HashTableOpenHashing implements Map {
         }
     }
 
-    private Object updateKey(String key, Object val) {
-        int idx = hf.hash(key);
-        Node current = this.table[idx];
-        while (current != null) {
-            if (current.entry().getKey().equals(key)) {
-                current.entry().setValue(val);
-            }
-            current = current.next();
-        }
-        return null;
-    }
-
     /** Return the value associated with the given key or null, if the map does not contain the key.
      * If the key is null, throw IllegalArgumentException.
      *
@@ -188,9 +176,30 @@ public class HashTableOpenHashing implements Map {
         this.hf = rehash_table.hf;
     }
 
+    /**
+     * A helper method to insert node in front of the linkedlist
+     * @param idx current index
+     * @param entry the entry to be inserted
+     */
     private void insertInFront (int idx, HashEntry entry) {
         Node newNode = new Node(entry, table[idx]);
         table[idx] = newNode;
         size++;
+    }
+
+    /**
+     * Update key's value if the key is already in the table
+     * @param key key
+     * @param val value
+     */
+    private void updateKey(String key, Object val) {
+        int idx = hf.hash(key);
+        Node current = this.table[idx];
+        while (current != null) {
+            if (current.entry().getKey().equals(key)) {
+                current.entry().setValue(val);
+            }
+            current = current.next();
+        }
     }
 }
