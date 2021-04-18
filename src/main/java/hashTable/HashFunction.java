@@ -27,8 +27,8 @@ public class HashFunction {
 
     /**
      * A secondary hash function d(k) to resolve collisions.
-     * @param key
-     * @return
+     * @param key String key
+     * @return q - (k % q) where q is the smallest prime number larger than max_size / 2.
      */
     public int getSecondHash (String key) {
         BigInteger bigInteger = getHashCode(key);

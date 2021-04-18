@@ -158,7 +158,6 @@ public class HashTableOpenHashing implements Map {
                 sb.append("\n");
             }
         }
-
         return sb.toString();
     }
 

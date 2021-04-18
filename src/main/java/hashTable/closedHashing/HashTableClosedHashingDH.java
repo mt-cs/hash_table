@@ -31,7 +31,31 @@ public class HashTableClosedHashingDH implements Map {
      */
     @Override
     public boolean containsKey(String key) {
-        // FILL IN CODE
+        int idx = hf.hash(key);
+        if (this.table[idx] == null || this.table[idx].isDeleted()) {
+            return false;
+        }
+        if (this.table[idx].getKey().equals(key)) {
+            return true;
+        }
+
+        int dk = hf.getSecondHash(key);
+        int j = 1;
+        int newIdx = (idx + (j * dk)) % maxSize;
+
+        while (table[newIdx] != null && !table[newIdx].isDeleted()) {
+            if (table[newIdx] == null || table[newIdx].isDeleted()) {
+                return false;
+            }
+            if (this.table[newIdx].getKey().equals(key)) {
+                if (this.table[idx].isDeleted()) {
+                    return false;
+                }
+                return true;
+            }
+            j++;
+            newIdx = (idx + (j * dk)) % maxSize;
+        }
         return false;
     }
 
@@ -76,8 +100,7 @@ public class HashTableClosedHashingDH implements Map {
         }
         int dk = hf.getSecondHash(key);
         int j = 1;
-        int temp = idx + (j * dk);
-        int newIdx = temp % maxSize;
+        int newIdx = (idx + (j * dk)) % maxSize;
 
         while (table[newIdx] != null && !table[newIdx].isDeleted()) {
             j++;
