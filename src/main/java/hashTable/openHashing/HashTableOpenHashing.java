@@ -46,9 +46,8 @@ public class HashTableOpenHashing implements Map {
      * @param value associated value
      */
     public void put(String key, Object value) {
-        // check if it's there
-        // updateIfPresent first calculate index
-        HashEntry entry = new HashEntry(key, value); //TODO: create the entry only when you want to insert in front
+        updateKey(key, value); // check if key is already in the table, not required to pass the test
+        HashEntry entry = new HashEntry(key, value);
         int idx;
         if (hf.getLoadFactor(size) <= 0.6) {
             idx = hf.hash(key);
@@ -57,8 +56,6 @@ public class HashTableOpenHashing implements Map {
                 table[idx] = head;
                 size++;
             } else {
-                // HashFunction hf = new HashFunction(maxSize);
-                // If the key is in the table, you should just replace the value for this key.
                 insertInFront(idx, entry);
             }
         } else {
@@ -66,7 +63,18 @@ public class HashTableOpenHashing implements Map {
             idx = hf.hash(key);
             insertInFront(idx, entry);
         }
+    }
 
+    private Object updateKey(String key, Object val) {
+        int idx = hf.hash(key);
+        Node current = this.table[idx];
+        while (current != null) {
+            if (current.entry().getKey().equals(key)) {
+                current.entry().setValue(val);
+            }
+            current = current.next();
+        }
+        return null;
     }
 
     /** Return the value associated with the given key or null, if the map does not contain the key.

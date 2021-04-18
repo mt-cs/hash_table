@@ -9,9 +9,9 @@ import hashTable.openHashing.Node;
 /** The class that implements the Map interface using closed hashing;
  *  uses linear probing to resolve collisions */
 public class HashTableClosedHashingLP implements Map {
-    private HashEntry[] table; // hash table
+    private HashEntry[] table;
     private int maxSize;
-    private int size; // the number of elements currently in the hash table
+    private int size;
     private HashFunction hf;
 
     /** Constructor for class HashTableClosedHashingLP.
@@ -43,21 +43,6 @@ public class HashTableClosedHashingLP implements Map {
         return searchLPContains (idx, key);
     }
 
-    private boolean searchLPContains (int idx, String key) {
-        for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
-            if (table[i] == null || table[i].isDeleted()) {
-                return false;
-            }
-            if (this.table[i].getKey().equals(key)) {
-                if (this.table[idx].isDeleted()) {
-                    return false;
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-
     /** Add (key, value) to the map.
      * Will replace previous value that this key was mapped to.
      * If key is null, throw IllegalArgumentException.
@@ -67,27 +52,19 @@ public class HashTableClosedHashingLP implements Map {
      */
     @Override
     public void put(String key, Object value) {
-        // TODO: if key is already there change the value to the new value, check the existing method
+        updateKey(key, value); // check if key is already in the table, not required to pass the test
         HashEntry entry = new HashEntry(key, value);
         int idx = hf.hash(key);
-        if (hf.getLoadFactor(size) <= 0.6) {
-            if (table[idx] != null && !table[idx].isDeleted()) {
-                idx = searchEmptyIndex(idx);
-                if (idx == 0) {
-                    rehash();
-                    idx = hf.hash(key);
-                }
-            }
-        } else {
+        if (!(hf.getLoadFactor(size) <= 0.6)) {
             rehash();
             idx = hf.hash(key);
         }
+        idx = checkIndex(idx, key);
         table[idx] = entry;
         size++;
         if (table[idx].isDeleted()) {
             table[idx].setDeleted(false);
         }
-
     }
 
     /** Return the value associated with the given key or null, if the map does not contain the key.
@@ -122,8 +99,6 @@ public class HashTableClosedHashingLP implements Map {
         }
         return null;
     }
-
-
 
     /** Remove a (key, value) entry if it exists.
      * Return the previous value associated with the given key, otherwise return null
@@ -219,4 +194,66 @@ public class HashTableClosedHashingLP implements Map {
         this.hf = rehash_table.hf;
     }
 
+    /**
+     * If the key is in the table, replace the value for this key.
+     * @param key key
+     * @param value new value
+     */
+    private void updateKey(String key, Object value) {
+        int idx = hf.hash(key);
+        if (this.table[idx] != null && this.table[idx].getKey().equals(key)) {
+            this.table[idx].setValue(value);
+        }
+        if (idx + 1 != maxSize) {
+            for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
+                if (table[i] == null || table[i].isDeleted()) {
+                    break;
+                }
+                if (this.table[i] != null && this.table[i].getKey().equals(key)) {
+                    if (this.table[i].isDeleted()) {
+                        break;
+                    }
+                    this.table[i].setValue(value);
+                }
+            }
+        }
+    }
+
+    /**
+     * A private helper method to check if index is not null
+     * @param idx current index
+     * @param key object String key
+     * @return idx integer new index
+     */
+    private int checkIndex(int idx, String key) {
+        if (table[idx] != null && !table[idx].isDeleted()) {
+            idx = searchEmptyIndex(idx);
+            if (idx == 0) {
+                rehash();
+                idx = hf.hash(key);
+            }
+        }
+        return idx;
+    }
+
+    /**
+     * search linear probing if the table contain the element circularly
+     * @param idx current index
+     * @param key String key
+     * @return true if table contains the key, false otherwise
+     */
+    private boolean searchLPContains (int idx, String key) {
+        for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
+            if (table[i] == null || table[i].isDeleted()) {
+                return false;
+            }
+            if (this.table[i].getKey().equals(key)) {
+                if (this.table[i].isDeleted()) {
+                    return false;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -15,7 +15,7 @@ public interface Map {
      * Will replace previous value that this key was mapped to.
      * If key is null, throw IllegalArgumentException.
      *
-     * @param key
+     * @param key key
      * @param value associated value
      */
     void put(String key, Object value);

@@ -43,15 +43,12 @@ public class HashTableClosedHashingDH implements Map {
         int j = 1;
         int newIdx = (idx + (j * dk)) % maxSize;
 
-        while (table[newIdx] != null && !table[newIdx].isDeleted()) {
+        while (checkIfNotNull(newIdx)) {
             if (checkIfNull(newIdx)) {
                 return false;
             }
             if (this.table[newIdx].getKey().equals(key)) {
-                if (this.table[idx].isDeleted()) {
-                    return false;
-                }
-                return true;
+                return !this.table[newIdx].isDeleted();
             }
             j++;
             newIdx = (idx + (j * dk)) % maxSize;
@@ -63,25 +60,19 @@ public class HashTableClosedHashingDH implements Map {
      * Will replace previous value that this key was mapped to.
      * If key is null, throw IllegalArgumentException.
      *
-     * @param key
+     * @param key key
      * @param value associated value
      */
     @Override
     public void put(String key, Object value) {
+        updateKey(key, value); // check if key is already in the table, not required to pass the test
         HashEntry entry = new HashEntry(key, value);
         int idx = hf.hash(key);
-        if (hf.getLoadFactor(size) <= 0.6) {
-            if (table[idx] != null && !table[idx].isDeleted()) {
-                idx = searchEmptyIndex(idx, key);
-                if (idx == 0) {
-                    rehash();
-                    idx = hf.hash(key);
-                }
-            }
-        } else {
+        if (!(hf.getLoadFactor(size) <= 0.6)) {
             rehash();
             idx = hf.hash(key);
         }
+        idx = checkIndex(idx, key);
         table[idx] = entry;
         size++;
         if (table[idx].isDeleted()) {
@@ -102,7 +93,7 @@ public class HashTableClosedHashingDH implements Map {
         int j = 1;
         int newIdx = (idx + (j * dk)) % maxSize;
 
-        while (table[newIdx] != null && !table[newIdx].isDeleted()) {
+        while (checkIfNotNull(newIdx)) {
             j++;
             newIdx = (idx + (j * dk)) % maxSize;
         }
@@ -135,8 +126,34 @@ public class HashTableClosedHashingDH implements Map {
      */
     @Override
     public Object get(String key) {
-        // FILL IN CODE
+        if (key == null) {
+            throw new IllegalArgumentException("Key is null");
+        }
+        int idx = hf.hash(key);
+        if (checkIfNull(idx)) {
+            return null;
+        }
+        if (this.table[idx].getKey().equals(key)) {
+            if (this.table[idx].isDeleted()) {
+                return null;
+            }
+            return this.table[idx].getValue();
+        }
 
+        int dk = hf.getSecondHash(key);
+        int j = 1;
+        int newIdx = (idx + (j * dk)) % maxSize;
+
+        while (checkIfNotNull(newIdx)) {
+            if (checkIfNull(newIdx)) {
+                return null;
+            }
+            if (this.table[newIdx].getKey().equals(key)) {
+                return this.table[newIdx].getValue();
+            }
+            j++;
+            newIdx = (idx + (j * dk)) % maxSize;
+        }
         return null;
     }
 
@@ -147,8 +164,33 @@ public class HashTableClosedHashingDH implements Map {
      */
     @Override
     public Object remove(String key) {
-        // FILL IN CODE
+        if (!containsKey(key)) {
+            return null;
+        }
+        int idx = hf.hash(key);
+        if (checkIfNull(idx)) {
+            return null;
+        }
+        if (this.table[idx].getKey().equals(key)) {
+            table[idx].setDeleted(true);
+            return this.table[idx].getValue();
+        }
 
+        int dk = hf.getSecondHash(key);
+        int j = 1;
+        int newIdx = (idx + (j * dk)) % maxSize;
+
+        while (checkIfNotNull(newIdx)) {
+            if (checkIfNull(newIdx)) {
+                return null;
+            }
+            if (this.table[newIdx].getKey().equals(key)) {
+                table[newIdx].setDeleted(true);
+                return this.table[newIdx].getValue();
+            }
+            j++;
+            newIdx = (idx + (j * dk)) % maxSize;
+        }
         return null;
     }
 
@@ -180,8 +222,69 @@ public class HashTableClosedHashingDH implements Map {
         return sb.toString();
     }
 
-    // Add other helper methods as needed
+    /**
+     * A private helper method to check if index is not null
+     * @param idx current index
+     * @param key object String key
+     * @return idx integer new index
+     */
+    private int checkIndex(int idx, String key) {
+        if (checkIfNotNull(idx)) {
+            idx = searchEmptyIndex(idx, key);
+            if (idx == 0) {
+                rehash();
+                idx = hf.hash(key);
+            }
+        }
+        return idx;
+    }
+
+    /**
+     * a helper method to check if the table is null
+     * @param index current int index
+     * @return true if table is null, false otherwise
+     */
     private boolean checkIfNull (int index) {
         return table[index] == null || table[index].isDeleted();
+    }
+
+    /**
+     * a helper method to check if the table is not null
+     * @param index current int index
+     * @return true if table is not null, false otherwise
+     */
+    private boolean checkIfNotNull (int index) {
+        return table[index] != null && !table[index].isDeleted();
+    }
+
+    /**
+     * If the key is in the table, replace the value for this key.
+     * @param key key
+     * @param value new value
+     */
+    private void updateKey(String key, Object value) {
+        int idx = hf.hash(key);
+        if (this.table[idx] != null && this.table[idx].getKey().equals(key)) {
+            this.table[idx].setValue(value);
+        }
+        if (idx + 1 != maxSize) {
+            int dk = hf.getSecondHash(key);
+            int j = 1;
+            int newIdx = (idx + (j * dk)) % maxSize;
+
+            while (checkIfNotNull(newIdx)) {
+                if (table[newIdx] == null || table[newIdx].isDeleted()) {
+                    break;
+                }
+                if (this.table[newIdx] != null && this.table[newIdx].getKey().equals(key)) {
+                    if (this.table[newIdx].isDeleted()) {
+                        break;
+                    }
+                    this.table[newIdx].setValue(value);
+                }
+                j++;
+                newIdx = (idx + (j * dk)) % maxSize;
+            }
+        }
     }
 }
