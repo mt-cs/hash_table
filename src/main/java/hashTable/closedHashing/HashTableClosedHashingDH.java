@@ -32,7 +32,7 @@ public class HashTableClosedHashingDH implements Map {
     @Override
     public boolean containsKey(String key) {
         int idx = hf.hash(key);
-        if (this.table[idx] == null || this.table[idx].isDeleted()) {
+        if (checkIfNull(idx)) {
             return false;
         }
         if (this.table[idx].getKey().equals(key)) {
@@ -44,7 +44,7 @@ public class HashTableClosedHashingDH implements Map {
         int newIdx = (idx + (j * dk)) % maxSize;
 
         while (table[newIdx] != null && !table[newIdx].isDeleted()) {
-            if (table[newIdx] == null || table[newIdx].isDeleted()) {
+            if (checkIfNull(newIdx)) {
                 return false;
             }
             if (this.table[newIdx].getKey().equals(key)) {
@@ -95,7 +95,7 @@ public class HashTableClosedHashingDH implements Map {
      * @return idx new integer index
      */
     private int searchEmptyIndex (int idx, String key) {
-        if (table[idx] == null || table[idx].isDeleted()) {
+        if (checkIfNull(idx)) {
             return idx;
         }
         int dk = hf.getSecondHash(key);
@@ -181,5 +181,7 @@ public class HashTableClosedHashingDH implements Map {
     }
 
     // Add other helper methods as needed
-
+    private boolean checkIfNull (int index) {
+        return table[index] == null || table[index].isDeleted();
+    }
 }
