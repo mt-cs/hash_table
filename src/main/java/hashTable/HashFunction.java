@@ -32,7 +32,7 @@ public class HashFunction {
      */
     public int getSecondHash (String key) {
         BigInteger bigInteger = getHashCode(key);
-        int q = getClosestPrime(max_size / 2 + 1);
+        int q = getClosestPrime((int)Math.ceil(max_size / 2.0));
         return q - (bigInteger.mod(BigInteger.valueOf(q)).intValue());
     }
 
