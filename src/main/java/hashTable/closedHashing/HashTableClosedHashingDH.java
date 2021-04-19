@@ -273,7 +273,7 @@ public class HashTableClosedHashingDH implements Map {
             int newIdx = (idx + (j * dk)) % maxSize;
 
             while (checkIfNotNull(newIdx)) {
-                if (table[newIdx] == null || table[newIdx].isDeleted()) {
+                if (checkIfNull(newIdx)) {
                     break;
                 }
                 if (this.table[newIdx] != null && this.table[newIdx].getKey().equals(key)) {
