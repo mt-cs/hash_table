@@ -5,6 +5,7 @@ import hashTable.HashTableDoubleHashing;
 import hashTable.Map;
 
 /** The class that implements the Map interface using closed hashing;
+ *  extends DoubleHashing class;
  *  uses double hashing to resolve collisions */
 public class HashTableClosedHashingDH extends HashTableDoubleHashing implements Map{
 
@@ -195,25 +196,6 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
         return this.size;
     }
 
-//    /**
-//     * toString
-//     * @return a string representing a hash table
-//     */
-//    public String toString() {
-//        StringBuilder sb = new StringBuilder();
-//        for (int i = 0; i < table.length; i++) {
-//            sb.append(i).append(": ");
-//            if (table[i] == null) {
-//                sb.append("null\n");
-//            } else {
-//                sb.append("(").append(table[i].getKey()).append(", ")
-//                        .append(table[i].getValue()).append(", ")
-//                        .append(table[i].isDeleted()).append(")\n");
-//            }
-//        }
-//        return sb.toString();
-//    }
-
     /**
      * A private helper method to check if index is not null
      * @param idx current index
@@ -247,17 +229,18 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
             int newIdx = (idx + (j * dk)) % maxSize;
 
             while (checkIfNotNull(newIdx)) {
-                if (checkIfNull(newIdx)) {
+                if (!checkIfNull(newIdx)) {
+                    if (this.table[newIdx] != null && this.table[newIdx].getKey().equals(key)) {
+                        if (this.table[newIdx].isDeleted()) {
+                            break;
+                        }
+                        this.table[newIdx].setValue(value);
+                    }
+                    j++;
+                    newIdx = (idx + (j * dk)) % maxSize;
+                } else {
                     break;
                 }
-                if (this.table[newIdx] != null && this.table[newIdx].getKey().equals(key)) {
-                    if (this.table[newIdx].isDeleted()) {
-                        break;
-                    }
-                    this.table[newIdx].setValue(value);
-                }
-                j++;
-                newIdx = (idx + (j * dk)) % maxSize;
             }
         }
     }

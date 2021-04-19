@@ -5,6 +5,7 @@ import hashTable.HashTableDoubleHashing;
 import hashTable.Map;
 
 /** The class that implements the Map interface using closed hashing;
+ *  extends DoubleHashing class;
  *  uses linear probing to resolve collisions */
 public class HashTableClosedHashingLP extends HashTableDoubleHashing implements Map {
 
@@ -25,7 +26,7 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
     @Override
     public boolean containsKey(String key) {
         int idx = hf.hash(key);
-        if (this.table[idx] == null || this.table[idx].isDeleted()) {
+        if (checkIfNull(idx)) {
             return false;
         }
         if (this.table[idx].getKey().equals(key)) {
@@ -70,7 +71,7 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
             throw new IllegalArgumentException("Key is null");
         }
         int idx = hf.hash(key);
-        if (this.table[idx] == null || this.table[idx].isDeleted()) {
+        if (checkIfNull(idx)) {
             return null;
         }
         if (this.table[idx].getKey().equals(key)) {
@@ -81,7 +82,7 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
         }
 
         for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
-            if (table[i] == null || table[i].isDeleted()) {
+            if (checkIfNull(i)) {
                 return null;
             }
             if (this.table[i].getKey().equals(key)) {
@@ -102,7 +103,7 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
             return null;
         }
         int idx = hf.hash(key);
-        if (table[idx] == null || table[idx].isDeleted()) {
+        if (checkIfNull(idx)) {
             return null;
         }
         if (this.table[idx].getKey().equals(key)) {
@@ -111,7 +112,7 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
         }
 
         for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
-            if (table[i] == null || table[i].isDeleted()) {
+            if (checkIfNull(i)) {
                 return null;
             }
             if (this.table[i].getKey().equals(key)) {
@@ -137,11 +138,11 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
      * @return idx new integer index
      */
     private int searchEmptyIndex (int idx) {
-        if (table[idx] == null || table[idx].isDeleted()) {
+        if (checkIfNull(idx)) {
             return idx;
         }
         for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
-            if (table[i] == null || table[idx].isDeleted()) {
+            if (checkIfNull(i)) {
                 return i;
             }
         }
@@ -178,7 +179,7 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
         }
         if (idx + 1 != maxSize) {
             for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
-                if (table[i] == null || table[i].isDeleted()) {
+                if (checkIfNull(i)) {
                     break;
                 }
                 if (this.table[i] != null && this.table[i].getKey().equals(key)) {
@@ -198,7 +199,7 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
      * @return idx integer new index
      */
     private int checkIndex(int idx, String key) {
-        if (table[idx] != null && !table[idx].isDeleted()) {
+        if (checkIfNotNull(idx)) {
             idx = searchEmptyIndex(idx);
             if (idx == 0) {
                 rehashLP();
@@ -216,11 +217,12 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
      */
     private boolean searchLPContains (int idx, String key) {
         for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
-            if (table[i] == null || table[i].isDeleted()) {
+            if (!checkIfNull(idx)) {
+                if (this.table[i].getKey().equals(key)) {
+                    return !this.table[i].isDeleted();
+                }
+            } else {
                 return false;
-            }
-            if (this.table[i].getKey().equals(key)) {
-                return !this.table[i].isDeleted();
             }
         }
         return false;

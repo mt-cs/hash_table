@@ -1,9 +1,12 @@
 package hashTable;
 
+/**
+ * This class in the parent class for ClosedHashingLP and ClosedHashingDH
+ */
 public class HashTableDoubleHashing {
-    protected HashEntry[] table; // hash table
+    protected HashEntry[] table;
     protected int maxSize;
-    protected int size; // the number of elements currently in the hash table
+    protected int size;
     protected HashFunction hf;
 
     /** Constructor for class HashTableClosedHashingDH.
@@ -16,6 +19,7 @@ public class HashTableDoubleHashing {
         size = 0;
         hf = new HashFunction(maxSize);
     }
+
     /**
      * toString
      * @return a string representing a hash table
