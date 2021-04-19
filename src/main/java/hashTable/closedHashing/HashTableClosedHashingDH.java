@@ -1,17 +1,12 @@
 package hashTable.closedHashing;
 
 import hashTable.HashEntry;
-import hashTable.HashFunction;
 import hashTable.HashTableDoubleHashing;
 import hashTable.Map;
 
 /** The class that implements the Map interface using closed hashing;
  *  uses double hashing to resolve collisions */
 public class HashTableClosedHashingDH extends HashTableDoubleHashing implements Map{
-//    private HashEntry[] table; // hash table
-//    private int maxSize;
-//    private int size; // the number of elements currently in the hash table
-//    private HashFunction hf;
 
     /** Constructor for class HashTableClosedHashingDH.
      *  Creates a hash table of the given size.
@@ -19,10 +14,6 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
      */
     public HashTableClosedHashingDH(int maxSize) {
         super(maxSize);
-//        this.maxSize = maxSize;
-//        table = new HashEntry[maxSize];
-//        size = 0;
-//        hf = new HashFunction(maxSize);
     }
 
     /** Return true if the map contains a (key, value) pair associated with this key,
@@ -67,11 +58,11 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
      */
     @Override
     public void put(String key, Object value) {
-        updateKey(key, value); // check if key is already in the table, not required to pass the test
+        updateKeyDH(key, value); // check if key is already in the table, not required to pass the test
         HashEntry entry = new HashEntry(key, value);
         int idx = hf.hash(key);
         if (!(hf.getLoadFactor(size) <= 0.6)) {
-            rehash();
+            rehashDH();
             idx = hf.hash(key);
         }
         idx = checkIndex(idx, key);
@@ -102,11 +93,10 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
         return newIdx;
     }
 
-
     /**
      * A helper me to rehash table to a new maxSize
      */
-    private void rehash () {
+    private void rehashDH () {
         maxSize = hf.getNewSize();
         HashEntry[] temp = table;
 
@@ -234,37 +224,19 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
         if (checkIfNotNull(idx)) {
             idx = searchEmptyIndex(idx, key);
             if (idx == 0) {
-                rehash();
+                rehashDH();
                 idx = hf.hash(key);
             }
         }
         return idx;
     }
 
-//    /**
-//     * a helper method to check if the table is null
-//     * @param index current int index
-//     * @return true if table is null, false otherwise
-//     */
-//    private boolean checkIfNull (int index) {
-//        return table[index] == null || table[index].isDeleted();
-//    }
-//
-//    /**
-//     * a helper method to check if the table is not null
-//     * @param index current int index
-//     * @return true if table is not null, false otherwise
-//     */
-//    private boolean checkIfNotNull (int index) {
-//        return table[index] != null && !table[index].isDeleted();
-//    }
-
     /**
      * If the key is in the table, replace the value for this key.
      * @param key key
      * @param value new value
      */
-    private void updateKey(String key, Object value) {
+    private void updateKeyDH(String key, Object value) {
         int idx = hf.hash(key);
         if (this.table[idx] != null && this.table[idx].getKey().equals(key)) {
             this.table[idx].setValue(value);

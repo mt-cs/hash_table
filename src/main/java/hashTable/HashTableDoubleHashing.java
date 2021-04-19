@@ -1,7 +1,5 @@
 package hashTable;
 
-import hashTable.closedHashing.HashTableClosedHashingDH;
-
 public class HashTableDoubleHashing {
     protected HashEntry[] table; // hash table
     protected int maxSize;

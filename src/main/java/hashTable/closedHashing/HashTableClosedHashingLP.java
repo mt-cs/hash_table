@@ -1,28 +1,19 @@
 package hashTable.closedHashing;
 
 import hashTable.HashEntry;
-import hashTable.HashFunction;
+import hashTable.HashTableDoubleHashing;
 import hashTable.Map;
-import hashTable.openHashing.HashTableOpenHashing;
-import hashTable.openHashing.Node;
 
 /** The class that implements the Map interface using closed hashing;
  *  uses linear probing to resolve collisions */
-public class HashTableClosedHashingLP implements Map {
-    private HashEntry[] table;
-    private int maxSize;
-    private int size;
-    private HashFunction hf;
+public class HashTableClosedHashingLP extends HashTableDoubleHashing implements Map {
 
     /** Constructor for class HashTableClosedHashingLP.
      *  Creates a hash table of the given size.
      * @param maxSize maximum number of elements the hash table can store
      */
     public HashTableClosedHashingLP(int maxSize) {
-        this.maxSize = maxSize;
-        table = new HashEntry[maxSize];
-        size = 0;
-        hf = new HashFunction(maxSize);
+        super(maxSize);
     }
 
     /** Return true if the map contains a (key, value) pair associated with this key,
@@ -52,11 +43,11 @@ public class HashTableClosedHashingLP implements Map {
      */
     @Override
     public void put(String key, Object value) {
-        updateKey(key, value); // check if key is already in the table, not required to pass the test
+        updateKeyLP(key, value); // check if key is already in the table, not required to pass the test
         HashEntry entry = new HashEntry(key, value);
         int idx = hf.hash(key);
         if (!(hf.getLoadFactor(size) <= 0.6)) {
-            rehash();
+            rehashLP();
             idx = hf.hash(key);
         }
         idx = checkIndex(idx, key);
@@ -141,25 +132,6 @@ public class HashTableClosedHashingLP implements Map {
     }
 
     /**
-     * toString
-     * @return a string representing a hash table
-     */
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < table.length; i++) {
-            sb.append(i).append(": ");
-            if (table[i] == null) {
-                sb.append("null\n");
-            } else {
-                sb.append("(").append(table[i].getKey()).append(", ")
-                        .append(table[i].getValue()).append(", ")
-                        .append(table[i].isDeleted()).append(")\n");
-            }
-        }
-        return sb.toString();
-    }
-
-    /**
      * A helper method for insertion to do linear probing and find the next empty index
      * @param idx current index
      * @return idx new integer index
@@ -179,7 +151,7 @@ public class HashTableClosedHashingLP implements Map {
     /**
      * A helper me to rehash table to a new maxSize
      */
-    private void rehash () {
+    private void rehashLP () {
         maxSize = hf.getNewSize();
         HashEntry[] temp = table;
 
@@ -199,7 +171,7 @@ public class HashTableClosedHashingLP implements Map {
      * @param key key
      * @param value new value
      */
-    private void updateKey(String key, Object value) {
+    private void updateKeyLP(String key, Object value) {
         int idx = hf.hash(key);
         if (this.table[idx] != null && this.table[idx].getKey().equals(key)) {
             this.table[idx].setValue(value);
@@ -229,7 +201,7 @@ public class HashTableClosedHashingLP implements Map {
         if (table[idx] != null && !table[idx].isDeleted()) {
             idx = searchEmptyIndex(idx);
             if (idx == 0) {
-                rehash();
+                rehashLP();
                 idx = hf.hash(key);
             }
         }
@@ -248,10 +220,7 @@ public class HashTableClosedHashingLP implements Map {
                 return false;
             }
             if (this.table[i].getKey().equals(key)) {
-                if (this.table[i].isDeleted()) {
-                    return false;
-                }
-                return true;
+                return !this.table[i].isDeleted();
             }
         }
         return false;
