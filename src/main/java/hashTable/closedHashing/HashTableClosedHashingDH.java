@@ -25,27 +25,27 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
      */
     @Override
     public boolean containsKey(String key) {
-        int idx = hf.hash(key);
+        int idx = getHf().hash(key);
         if (checkIfNull(idx)) {
             return false;
         }
-        if (this.table[idx].getKey().equals(key)) {
+        if (this.getTable()[idx].getKey().equals(key)) {
             return true;
         }
 
-        int dk = hf.getSecondHash(key);
+        int dk = getHf().getSecondHash(key);
         int j = 1;
-        int newIdx = (idx + (j * dk)) % maxSize;
+        int newIdx = (idx + (j * dk)) % getMaxSize();
 
         while (checkIfNotNull(newIdx)) {
             if (checkIfNull(newIdx)) {
                 return false;
             }
-            if (this.table[newIdx].getKey().equals(key)) {
-                return !this.table[newIdx].isDeleted();
+            if (this.getTable()[newIdx].getKey().equals(key)) {
+                return !this.getTable()[newIdx].isDeleted();
             }
             j++;
-            newIdx = (idx + (j * dk)) % maxSize;
+            newIdx = (idx + (j * dk)) % this.getMaxSize();
         }
         return false;
     }
@@ -61,16 +61,16 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
     public void put(String key, Object value) {
         updateKeyDH(key, value); // check if key is already in the table, not required to pass the test
         HashEntry entry = new HashEntry(key, value);
-        int idx = hf.hash(key);
-        if (!(hf.getLoadFactor(size) <= 0.6)) {
+        int idx = getHf().hash(key);
+        if (!(getHf().getLoadFactor(size()) <= 0.6)) {
             rehashDH();
-            idx = hf.hash(key);
+            idx = getHf().hash(key);
         }
         idx = checkIndex(idx, key);
-        table[idx] = entry;
-        size++;
-        if (table[idx].isDeleted()) {
-            table[idx].setDeleted(false);
+        getTable()[idx] = entry;
+        setSize(size() + 1);
+        if (getTable()[idx].isDeleted()) {
+            getTable()[idx].setDeleted(false);
         }
     }
 
@@ -83,13 +83,13 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
         if (checkIfNull(idx)) {
             return idx;
         }
-        int dk = hf.getSecondHash(key);
+        int dk = getHf().getSecondHash(key);
         int j = 1;
-        int newIdx = (idx + (j * dk)) % maxSize;
+        int newIdx = (idx + (j * dk)) % getMaxSize();
 
         while (checkIfNotNull(newIdx)) {
             j++;
-            newIdx = (idx + (j * dk)) % maxSize;
+            newIdx = (idx + (j * dk)) % getMaxSize();
         }
         return newIdx;
     }
@@ -98,18 +98,18 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
      * A helper me to rehash table to a new maxSize
      */
     private void rehashDH () {
-        maxSize = hf.getNewSize();
-        HashEntry[] temp = table;
+        setMaxSize(getHf().getNewSize());
+        HashEntry[] temp = getTable();
 
-        HashTableClosedHashingDH rehash_table = new HashTableClosedHashingDH(maxSize);
+        HashTableClosedHashingDH rehash_table = new HashTableClosedHashingDH(getMaxSize());
         for (HashEntry entry : temp) {
             if (entry != null && !entry.isDeleted()) {
                 rehash_table.put(entry.getKey(), entry.getValue());
             }
         }
-        this.table = rehash_table.table;
-        this.size = rehash_table.size;
-        this.hf = rehash_table.hf;
+        setTable(rehash_table.getTable());
+        setSize(rehash_table.getSize());
+        setHf(rehash_table.getHf());
     }
     /** Return the value associated with the given key or null, if the map does not contain the key.
      * If the key is null, throw IllegalArgumentException.
@@ -122,30 +122,30 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
         if (key == null) {
             throw new IllegalArgumentException("Key is null");
         }
-        int idx = hf.hash(key);
+        int idx = getHf().hash(key);
         if (checkIfNull(idx)) {
             return null;
         }
-        if (this.table[idx].getKey().equals(key)) {
-            if (this.table[idx].isDeleted()) {
+        if (this.getTable()[idx].getKey().equals(key)) {
+            if (this.getTable()[idx].isDeleted()) {
                 return null;
             }
-            return this.table[idx].getValue();
+            return this.getTable()[idx].getValue();
         }
 
-        int dk = hf.getSecondHash(key);
+        int dk = getHf().getSecondHash(key);
         int j = 1;
-        int newIdx = (idx + (j * dk)) % maxSize;
+        int newIdx = (idx + (j * dk)) % getMaxSize();
 
         while (checkIfNotNull(newIdx)) {
             if (checkIfNull(newIdx)) {
                 return null;
             }
-            if (this.table[newIdx].getKey().equals(key)) {
-                return this.table[newIdx].getValue();
+            if (this.getTable()[newIdx].getKey().equals(key)) {
+                return this.getTable()[newIdx].getValue();
             }
             j++;
-            newIdx = (idx + (j * dk)) % maxSize;
+            newIdx = (idx + (j * dk)) % getMaxSize();
         }
         return null;
     }
@@ -160,29 +160,29 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
         if (!containsKey(key)) {
             return null;
         }
-        int idx = hf.hash(key);
+        int idx = getHf().hash(key);
         if (checkIfNull(idx)) {
             return null;
         }
-        if (this.table[idx].getKey().equals(key)) {
-            table[idx].setDeleted(true);
-            return this.table[idx].getValue();
+        if (this.getTable()[idx].getKey().equals(key)) {
+            getTable()[idx].setDeleted(true);
+            return this.getTable()[idx].getValue();
         }
 
-        int dk = hf.getSecondHash(key);
+        int dk = getHf().getSecondHash(key);
         int j = 1;
-        int newIdx = (idx + (j * dk)) % maxSize;
+        int newIdx = (idx + (j * dk)) % getMaxSize();
 
         while (checkIfNotNull(newIdx)) {
             if (checkIfNull(newIdx)) {
                 return null;
             }
-            if (this.table[newIdx].getKey().equals(key)) {
-                table[newIdx].setDeleted(true);
-                return this.table[newIdx].getValue();
+            if (this.getTable()[newIdx].getKey().equals(key)) {
+                getTable()[newIdx].setDeleted(true);
+                return this.getTable()[newIdx].getValue();
             }
             j++;
-            newIdx = (idx + (j * dk)) % maxSize;
+            newIdx = (idx + (j * dk)) % getMaxSize();
         }
         return null;
     }
@@ -193,7 +193,7 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
      */
     @Override
     public int size() {
-        return this.size;
+        return this.getSize();
     }
 
     /**
@@ -207,7 +207,7 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
             idx = searchEmptyIndex(idx, key);
             if (idx == 0) {
                 rehashDH();
-                idx = hf.hash(key);
+                idx = getHf().hash(key);
             }
         }
         return idx;
@@ -219,25 +219,25 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
      * @param value new value
      */
     private void updateKeyDH(String key, Object value) {
-        int idx = hf.hash(key);
-        if (this.table[idx] != null && this.table[idx].getKey().equals(key)) {
-            this.table[idx].setValue(value);
+        int idx = getHf().hash(key);
+        if (this.getTable()[idx] != null && this.getTable()[idx].getKey().equals(key)) {
+            this.getTable()[idx].setValue(value);
         }
-        if (idx + 1 != maxSize) {
-            int dk = hf.getSecondHash(key);
+        if (idx + 1 != getMaxSize()) {
+            int dk = getHf().getSecondHash(key);
             int j = 1;
-            int newIdx = (idx + (j * dk)) % maxSize;
+            int newIdx = (idx + (j * dk)) % getMaxSize();
 
             while (checkIfNotNull(newIdx)) {
                 if (!checkIfNull(newIdx)) {
-                    if (this.table[newIdx] != null && this.table[newIdx].getKey().equals(key)) {
-                        if (this.table[newIdx].isDeleted()) {
+                    if (this.getTable()[newIdx] != null && this.getTable()[newIdx].getKey().equals(key)) {
+                        if (this.getTable()[newIdx].isDeleted()) {
                             break;
                         }
-                        this.table[newIdx].setValue(value);
+                        this.getTable()[newIdx].setValue(value);
                     }
                     j++;
-                    newIdx = (idx + (j * dk)) % maxSize;
+                    newIdx = (idx + (j * dk)) % getMaxSize();
                 } else {
                     break;
                 }

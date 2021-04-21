@@ -4,10 +4,10 @@ package hashTable;
  * This class in the parent class for ClosedHashingLP and ClosedHashingDH
  */
 public class HashTableDoubleHashing {
-    protected HashEntry[] table;
-    protected int maxSize;
-    protected int size;
-    protected HashFunction hf;
+    private HashEntry[] table;
+    private int maxSize;
+    private int size;
+    private HashFunction hf;
 
     /** Constructor for class HashTableClosedHashingDH.
      *  Creates a hash table of the given size.
@@ -18,6 +18,70 @@ public class HashTableDoubleHashing {
         table = new HashEntry[maxSize];
         size = 0;
         hf = new HashFunction(maxSize);
+    }
+
+    /**
+     * Getter for table
+     * @return table
+     */
+    public HashEntry[] getTable() {
+        return table;
+    }
+
+    /**
+     * Getter for maxSize
+     * @return maxSize
+     */
+    public int getMaxSize() {
+        return maxSize;
+    }
+
+    /**
+     * Getter for size
+     * @return size
+     */
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * Getter for hf
+     * @return hf
+     */
+    public HashFunction getHf() {
+        return hf;
+    }
+
+    /**
+     * setter for table
+     * @param inTable HashEntry[] table
+     */
+    public void setTable(HashEntry[] inTable) {
+        table = inTable;
+    }
+
+    /**
+     * setter for MaxSize
+     * @param inMaxSize integer for maximum size
+     */
+    public void setMaxSize(int inMaxSize) {
+        maxSize = inMaxSize;
+    }
+
+    /**
+     * Setter for size
+     * @param inSize integer size
+     */
+    public void setSize(int inSize) {
+        size = inSize;
+    }
+
+    /**
+     * Setter for hf
+     * @param inHf HashFunction hf
+     */
+    public void setHf(HashFunction inHf) {
+        hf = inHf;
     }
 
     /**

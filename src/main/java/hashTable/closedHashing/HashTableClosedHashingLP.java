@@ -25,11 +25,11 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
      */
     @Override
     public boolean containsKey(String key) {
-        int idx = hf.hash(key);
+        int idx = getHf().hash(key);
         if (checkIfNull(idx)) {
             return false;
         }
-        if (this.table[idx].getKey().equals(key)) {
+        if (this.getTable()[idx].getKey().equals(key)) {
             return true;
         }
         return searchLPContains (idx, key);
@@ -46,16 +46,16 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
     public void put(String key, Object value) {
         updateKeyLP(key, value); // check if key is already in the table, not required to pass the test
         HashEntry entry = new HashEntry(key, value);
-        int idx = hf.hash(key);
-        if (!(hf.getLoadFactor(size) <= 0.6)) {
+        int idx = getHf().hash(key);
+        if (!(getHf().getLoadFactor(size()) <= 0.6)) {
             rehashLP();
-            idx = hf.hash(key);
+            idx = getHf().hash(key);
         }
         idx = checkIndex(idx, key);
-        table[idx] = entry;
-        size++;
-        if (table[idx].isDeleted()) {
-            table[idx].setDeleted(false);
+        getTable()[idx] = entry;
+        setSize(size() + 1);
+        if (getTable()[idx].isDeleted()) {
+            getTable()[idx].setDeleted(false);
         }
     }
 
@@ -70,23 +70,23 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
         if (key == null) {
             throw new IllegalArgumentException("Key is null");
         }
-        int idx = hf.hash(key);
+        int idx = getHf().hash(key);
         if (checkIfNull(idx)) {
             return null;
         }
-        if (this.table[idx].getKey().equals(key)) {
-            if (this.table[idx].isDeleted()) {
+        if (this.getTable()[idx].getKey().equals(key)) {
+            if (this.getTable()[idx].isDeleted()) {
                 return null;
             }
-            return this.table[idx].getValue();
+            return this.getTable()[idx].getValue();
         }
 
-        for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
+        for (int i = idx + 1; i != idx; i = (i + 1) % getMaxSize()) {
             if (checkIfNull(i)) {
                 return null;
             }
-            if (this.table[i].getKey().equals(key)) {
-                return this.table[i].getValue();
+            if (this.getTable()[i].getKey().equals(key)) {
+                return this.getTable()[i].getValue();
             }
         }
         return null;
@@ -102,22 +102,22 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
         if (!containsKey(key)) {
             return null;
         }
-        int idx = hf.hash(key);
+        int idx = getHf().hash(key);
         if (checkIfNull(idx)) {
             return null;
         }
-        if (this.table[idx].getKey().equals(key)) {
-            table[idx].setDeleted(true);
-            return this.table[idx].getValue();
+        if (this.getTable()[idx].getKey().equals(key)) {
+            getTable()[idx].setDeleted(true);
+            return this.getTable()[idx].getValue();
         }
 
-        for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
+        for (int i = idx + 1; i != idx; i = (i + 1) % getMaxSize()) {
             if (checkIfNull(i)) {
                 return null;
             }
-            if (this.table[i].getKey().equals(key)) {
-                table[i].setDeleted(true);
-                return this.table[i].getValue();
+            if (this.getTable()[i].getKey().equals(key)) {
+                getTable()[i].setDeleted(true);
+                return this.getTable()[i].getValue();
             }
         }
         return null;
@@ -129,7 +129,7 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
      */
     @Override
     public int size() {
-        return this.size;
+        return this.getSize();
     }
 
     /**
@@ -141,7 +141,7 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
         if (checkIfNull(idx)) {
             return idx;
         }
-        for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
+        for (int i = idx + 1; i != idx; i = (i + 1) % getMaxSize()) {
             if (checkIfNull(i)) {
                 return i;
             }
@@ -153,18 +153,18 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
      * A helper me to rehash table to a new maxSize
      */
     private void rehashLP () {
-        maxSize = hf.getNewSize();
-        HashEntry[] temp = table;
+        setMaxSize(getHf().getNewSize());
+        HashEntry[] temp = getTable();
 
-        HashTableClosedHashingLP rehash_table = new HashTableClosedHashingLP(maxSize);
+        HashTableClosedHashingLP rehash_table = new HashTableClosedHashingLP(getMaxSize());
         for (HashEntry entry : temp) {
             if (entry != null && !entry.isDeleted()) {
                 rehash_table.put(entry.getKey(), entry.getValue());
             }
         }
-        this.table = rehash_table.table;
-        this.size = rehash_table.size;
-        this.hf = rehash_table.hf;
+        setTable(rehash_table.getTable());
+        setSize(rehash_table.size());
+        setHf(rehash_table.getHf());
     }
 
     /**
@@ -173,20 +173,20 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
      * @param value new value
      */
     private void updateKeyLP(String key, Object value) {
-        int idx = hf.hash(key);
-        if (this.table[idx] != null && this.table[idx].getKey().equals(key)) {
-            this.table[idx].setValue(value);
+        int idx = getHf().hash(key);
+        if (this.getTable()[idx] != null && this.getTable()[idx].getKey().equals(key)) {
+            this.getTable()[idx].setValue(value);
         }
-        if (idx + 1 != maxSize) {
-            for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
+        if (idx + 1 != getMaxSize()) {
+            for (int i = idx + 1; i != idx; i = (i + 1) % getMaxSize()) {
                 if (checkIfNull(i)) {
                     break;
                 }
-                if (this.table[i] != null && this.table[i].getKey().equals(key)) {
-                    if (this.table[i].isDeleted()) {
+                if (this.getTable()[i] != null && this.getTable()[i].getKey().equals(key)) {
+                    if (this.getTable()[i].isDeleted()) {
                         break;
                     }
-                    this.table[i].setValue(value);
+                    this.getTable()[i].setValue(value);
                 }
             }
         }
@@ -203,7 +203,7 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
             idx = searchEmptyIndex(idx);
             if (idx == 0) {
                 rehashLP();
-                idx = hf.hash(key);
+                idx = getHf().hash(key);
             }
         }
         return idx;
@@ -216,10 +216,10 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
      * @return true if table contains the key, false otherwise
      */
     private boolean searchLPContains (int idx, String key) {
-        for (int i = idx + 1; i != idx; i = (i + 1) % maxSize) {
+        for (int i = idx + 1; i != idx; i = (i + 1) % getMaxSize()) {
             if (!checkIfNull(idx)) {
-                if (this.table[i].getKey().equals(key)) {
-                    return !this.table[i].isDeleted();
+                if (this.getTable()[i].getKey().equals(key)) {
+                    return !this.getTable()[i].isDeleted();
                 }
             } else {
                 return false;
