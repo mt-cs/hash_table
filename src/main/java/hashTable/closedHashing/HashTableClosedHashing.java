@@ -1,9 +1,12 @@
-package hashTable;
+package hashTable.closedHashing;
+
+import hashTable.HashEntry;
+import hashTable.HashFunction;
 
 /**
  * This class in the parent class for ClosedHashingLP and ClosedHashingDH
  */
-public class HashTableDoubleHashing {
+public class HashTableClosedHashing {
     private HashEntry[] table;
     private int maxSize;
     private int size;
@@ -13,7 +16,7 @@ public class HashTableDoubleHashing {
      *  Creates a hash table of the given size.
      * @param maxSize maximum number of elements the hash table can store
      */
-    public HashTableDoubleHashing(int maxSize) {
+    public HashTableClosedHashing(int maxSize) {
         this.maxSize = maxSize;
         table = new HashEntry[maxSize];
         size = 0;

@@ -1,13 +1,12 @@
 package hashTable.closedHashing;
 
 import hashTable.HashEntry;
-import hashTable.HashTableDoubleHashing;
 import hashTable.Map;
 
 /** The class that implements the Map interface using closed hashing;
  *  extends DoubleHashing class;
  *  uses linear probing to resolve collisions */
-public class HashTableClosedHashingLP extends HashTableDoubleHashing implements Map {
+public class HashTableClosedHashingLP extends HashTableClosedHashing implements Map {
 
     /** Constructor for class HashTableClosedHashingLP.
      *  Creates a hash table of the given size.
