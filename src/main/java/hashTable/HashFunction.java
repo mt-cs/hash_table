@@ -1,9 +1,5 @@
 package hashTable;
-
-import hashTable.openHashing.Node;
-
 import java.math.BigInteger;
-import java.util.HashMap;
 
 public class HashFunction {
     int max_size;

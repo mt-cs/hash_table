@@ -206,6 +206,12 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
                 idx = getHf().hash(key);
             }
         }
+        //Handling insertion if the table is full, in case we turn off rehashing without load factor
+        if (idx == 0 && size() == getMaxSize()) {
+            System.out.println("Please resize the table...");
+            throw new IllegalStateException("The table is full!");
+        }
+
         return idx;
     }
 
@@ -217,7 +223,7 @@ public class HashTableClosedHashingLP extends HashTableDoubleHashing implements 
      */
     private boolean searchLPContains (int idx, String key) {
         for (int i = idx + 1; i != idx; i = (i + 1) % getMaxSize()) {
-            if (!checkIfNull(idx)) {
+            if (!checkIfNull(i)) {
                 if (this.getTable()[i].getKey().equals(key)) {
                     return !this.getTable()[i].isDeleted();
                 }
