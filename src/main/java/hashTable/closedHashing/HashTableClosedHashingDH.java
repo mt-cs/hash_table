@@ -44,6 +44,10 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
             if (this.getTable()[newIdx].getKey().equals(key)) {
                 return !this.getTable()[newIdx].isDeleted();
             }
+            if (j == getMaxSize() - 1) {
+                System.out.println("--> The table is full! Key is not found.");
+                return false;
+            }
             j++;
             newIdx = (idx + (j * dk)) % this.getMaxSize();
         }
@@ -59,18 +63,20 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
      */
     @Override
     public void put(String key, Object value) {
-        updateKeyDH(key, value); // check if key is already in the table, not required to pass the test
-        HashEntry entry = new HashEntry(key, value);
-        int idx = getHf().hash(key);
+        boolean updated = updateKeyDH(key, value); // check if key is already in the table, not required to pass the test
+        if (!updated) {
+            HashEntry entry = new HashEntry(key, value);
+            int idx = getHf().hash(key);
         if (!(getHf().getLoadFactor(size()) <= 0.6)) {
             rehashDH();
             idx = getHf().hash(key);
         }
-        idx = checkIndex(idx, key);
-        getTable()[idx] = entry;
-        setSize(size() + 1);
-        if (getTable()[idx].isDeleted()) {
-            getTable()[idx].setDeleted(false);
+            idx = checkIndex(idx, key);
+            getTable()[idx] = entry;
+            setSize(size() + 1);
+            if (getTable()[idx].isDeleted()) {
+                getTable()[idx].setDeleted(false);
+            }
         }
     }
 
@@ -88,8 +94,17 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
         int newIdx = (idx + (j * dk)) % getMaxSize();
 
         while (checkIfNotNull(newIdx)) {
+            if (j == getMaxSize() - 1) {
+                System.out.println("--> The table is full! Key is not found.");
+                return 0;
+            }
             j++;
             newIdx = (idx + (j * dk)) % getMaxSize();
+            // If we turn off load factor and table is full
+            if (size() == getMaxSize()) {
+                System.out.println("--> Please resize the table...");
+                throw new IllegalStateException("The table is full!");
+            }
         }
         return newIdx;
     }
@@ -144,6 +159,10 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
             if (this.getTable()[newIdx].getKey().equals(key)) {
                 return this.getTable()[newIdx].getValue();
             }
+            if (j == getMaxSize() - 1) {
+                System.out.println("--> The table is full! Key is not found.");
+                return null;
+            }
             j++;
             newIdx = (idx + (j * dk)) % getMaxSize();
         }
@@ -180,6 +199,10 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
             if (this.getTable()[newIdx].getKey().equals(key)) {
                 getTable()[newIdx].setDeleted(true);
                 return this.getTable()[newIdx].getValue();
+            }
+            if (j == getMaxSize() - 1) {
+                System.out.println("--> The table is full! Key is not found.");
+                return false;
             }
             j++;
             newIdx = (idx + (j * dk)) % getMaxSize();
@@ -218,10 +241,11 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
      * @param key key
      * @param value new value
      */
-    private void updateKeyDH(String key, Object value) {
+    private boolean updateKeyDH(String key, Object value) {
         int idx = getHf().hash(key);
         if (this.getTable()[idx] != null && this.getTable()[idx].getKey().equals(key)) {
             this.getTable()[idx].setValue(value);
+            return true;
         }
         if (idx + 1 != getMaxSize()) {
             int dk = getHf().getSecondHash(key);
@@ -232,16 +256,22 @@ public class HashTableClosedHashingDH extends HashTableDoubleHashing implements 
                 if (!checkIfNull(newIdx)) {
                     if (this.getTable()[newIdx] != null && this.getTable()[newIdx].getKey().equals(key)) {
                         if (this.getTable()[newIdx].isDeleted()) {
-                            break;
+                            return false;
                         }
                         this.getTable()[newIdx].setValue(value);
+                        return true;
+                    }
+                    if (j == getMaxSize() - 1) {
+                        System.out.println("--> The table is full! Key is not found");
+                        return false;
                     }
                     j++;
                     newIdx = (idx + (j * dk)) % getMaxSize();
                 } else {
-                    break;
+                    return false;
                 }
             }
         }
+        return false;
     }
 }
